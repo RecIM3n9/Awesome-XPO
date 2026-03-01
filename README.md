@@ -8,7 +8,7 @@ A structured and comprehensive reading list & resource tracker for Reinforcement
 #### 0. [Proximal policy optimization algorithms](http://arxiv.org/abs/1707.06347)
 * **Algorithm:** PPO
 * **Venue/Year:** NeurIPS 2022
-* **Local PDF:**  [Schulman et al. - 2017 - Proximal policy optimization algorithms.pdf](papers/Schulman et al. - 2017 - Proximal policy optimization algorithms.pdf) 
+* **Local PDF:**  [Schulman et al. - 2017 - Proximal policy optimization algorithms.pdf](<papers/Schulman et al. - 2017 - Proximal policy optimization algorithms.pdf>) 
 * **Rating:** 
 > **Description:** *Pending review. To be summarized by the team.*
 
