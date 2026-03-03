@@ -87,7 +87,7 @@ A structured and comprehensive reading list & resource tracker for Reinforcement
 ## 🌟 Useful Resources (Surveys & Codebases)
 
 ### 📖 Comprehensive Surveys
-* **[A Comprehensive Survey of Direct Preference Optimization: Datasets, Theories, Variants, and Applications](https://arxiv.org/abs/2406.18341)**
+* **[A Comprehensive Survey of Direct Preference Optimization: Datasets, Theories, Variants, and Applications](https://arxiv.org/abs/2410.15595)**
   * **Brief**: A must-read survey! Exhaustively categorizes the evolution, mathematical essence, and common datasets of DPO and its dozens of variants (IPO, KTO, CPO, etc.).
 * **[A Survey of Reinforcement Learning for Large Reasoning Models](http://arxiv.org/abs/2509.08827) **
   * **Brief**: Focuses on the frontier transition from "preference alignment" to "Verifiable Reasoning (RLVR)" within the reinforcement learning paradigm.
