@@ -16,7 +16,8 @@ A structured and comprehensive reading list & resource tracker for Reinforcement
 > * **Core Intuition:** The foundational Actor-Critic framework for RLHF. It optimizes a policy against a trained Reward Model (RM) while anchoring updates to a Reference Model to prevent reward hacking.
 > * **Engineering Traits:** Offers a high performance ceiling and enables online exploration. However, it is highly sensitive to hyperparameters and extremely memory-intensive, requiring four concurrent models (Actor, Critic, Reward, Reference).
 > * **Mathematical Formulation:** Utilizes a clipped surrogate objective to constrain policy updates:
->   $L^{\text{CLIP}}(\phi) = \hat{\mathbb{E}}_t \left[ \min(r_t(\phi)\hat{A}_t, \text{clip}(r_t(\phi), 1-\epsilon, 1+\epsilon)\hat{A}_t) \right]$
+> 
+> $$L^{\text{CLIP}}(\phi) = \hat{\mathbb{E}}_t \left[ \min(r_t(\phi)\hat{A}_t, \text{clip}(r_t(\phi), 1-\epsilon, 1+\epsilon)\hat{A}_t) \right]$$
 
 #### 1. [Direct Preference Optimization: Your Language Model is Secretly a Reward Model](https://arxiv.org/abs/2305.18290)
 * **Algorithm:** DPO
@@ -28,7 +29,8 @@ A structured and comprehensive reading list & resource tracker for Reinforcement
 > * **Core Intuition:** Leverages the Bradley-Terry model to mathematically demonstrate that the LLM implicitly acts as a reward model. It bypasses explicit reward modeling and RL entirely, framing alignment as a binary classification problem.
 > * **Engineering Traits:** Highly stable and memory-efficient (requires only the Policy and Reference models). It serves as the standard baseline for aligning Small Language Models (SLMs).
 > * **Mathematical Formulation:** Optimizes the negative log-likelihood of preference pairs:
->   $\mathcal{L}_{\text{DPO}}(\pi_\theta; \pi_{\text{ref}}) = -\mathbb{E}_{(x, y_w, y_l)}\left[\log \sigma \left(\beta \log \frac{\pi_\theta(y_w|x)}{\pi_{\text{ref}}(y_w|x)} - \beta \log \frac{\pi_\theta(y_l|x)}{\pi_{\text{ref}}(y_l|x)}\right)\right]$
+> 
+> $$\mathcal{L}_{\text{DPO}}(\pi_\theta; \pi_{\text{ref}}) = -\mathbb{E}_{(x, y_w, y_l)}\left[\log \sigma \left(\beta \log \frac{\pi_\theta(y_w|x)}{\pi_{\text{ref}}(y_w|x)} - \beta \log \frac{\pi_\theta(y_l|x)}{\pi_{\text{ref}}(y_l|x)}\right)\right]$$
 
 #### 2. [DeepSeekMath: Pushing the Limits of Mathematical Reasoning in Open Language Models](https://arxiv.org/abs/2402.03300) & [DeepSeek-R1: Incentivizing Reasoning Capability in LLMs via Reinforcement Learning](https://arxiv.org/abs/2501.12948)
 * **Algorithm:** GRPO
@@ -40,7 +42,8 @@ A structured and comprehensive reading list & resource tracker for Reinforcement
 > * **Core Intuition:** Eliminates the Critic (Value Network) by sampling a group of outputs for a single prompt. It estimates advantages via group-relative Z-score normalization based on rule-based rewards.
 > * **Engineering Traits:** Significantly reduces memory and communication overhead in distributed setups, serving as the infrastructural foundation for Reinforcement Learning for Verifiable Reasoning (RLVR) in reasoning models.
 > * **Mathematical Formulation:** Group-relative advantage estimation:
->   $\hat{A}_{i,j} = \frac{r_{i,j} - \text{mean}(r_i)}{\text{std}(r_i)}$
+> 
+> $$\hat{A}_{i,j} = \frac{r_{i,j} - \text{mean}(r_i)}{\text{std}(r_i)}$$
 
 #### 3. [KTO: Model Alignment as Prospect Theoretic Optimization](https://arxiv.org/abs/2402.01306)
 * **Algorithm:** KTO
@@ -60,12 +63,10 @@ A structured and comprehensive reading list & resource tracker for Reinforcement
 * **Rating:** 
 > **Description:** 
 > * **Core Intuition:** A monolithic approach unifying SFT and alignment. It discards both the Reward and Reference models by appending an odds-ratio-based relative penalty directly to the standard SFT loss.
->
 > * **Engineering Traits:** Extremely lightweight. Optimal for resource-constrained environments, allowing rapid iterative fine-tuning on SLMs using methods like LoRA.
->
 > * **Mathematical Formulation:**  
 >
->   $\mathcal{L}_{\text{ORPO}} = \mathbb{E}_{(x, y_w, y_l)} \left[ \mathcal{L}_{\text{SFT}}(y_w) + \lambda \cdot \log \sigma \left( \log \frac{\text{odds}_\theta(y_w|x)}{\text{odds}_\theta(y_l|x)} \right) \right]$
+> $$\mathcal{L}_{\text{ORPO}} = \mathbb{E}_{(x, y_w, y_l)} \left[ \mathcal{L}_{\text{SFT}}(y_w) + \lambda \cdot \log \sigma \left( \log \frac{\text{odds}_\theta(y_w|x)}{\text{odds}_\theta(y_l|x)} \right) \right]$$
 
 #### 5. [A general theoretical paradigm to understand learning from human preferences](http://arxiv.org/abs/2310.12036)
 * **Algorithm:** $\Psi $PO / IPO
@@ -77,7 +78,8 @@ A structured and comprehensive reading list & resource tracker for Reinforcement
 > * **Core Intuition:** Addresses DPO's theoretical vulnerability to overfitting. IPO frames preference learning as a root-finding problem rather than maximum likelihood, applying stronger regularization.
 > * **Engineering Traits:** Prevents policy degradation and out-of-distribution generation issues inherent in unregularized Bradley-Terry models.
 > * **Mathematical Formulation:** Replaces logistic loss with a squared error formulation:
->   $\mathcal{L}_{\text{IPO}} = \mathbb{E} \left[ \left( \log \frac{\pi_\theta(y_w|x)}{\pi_{\text{ref}}(y_w|x)} - \log \frac{\pi_\theta(y_l|x)}{\pi_{\text{ref}}(y_l|x)} - \frac{\tau}{2} \right)^2 \right]$
+> 
+> $$\mathcal{L}_{\text{IPO}} = \mathbb{E} \left[ \left( \log \frac{\pi_\theta(y_w|x)}{\pi_{\text{ref}}(y_w|x)} - \log \frac{\pi_\theta(y_l|x)}{\pi_{\text{ref}}(y_l|x)} - \frac{\tau}{2} \right)^2 \right]$$
 
 #### 6. [SimPO: Simple Preference Optimization with a Reference-Free Reward](https://arxiv.org/abs/2405.14734)
 * **Algorithm:** SimPO
