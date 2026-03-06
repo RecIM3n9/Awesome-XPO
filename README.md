@@ -109,6 +109,44 @@ A structured and comprehensive reading list & resource tracker for Reinforcement
 * **Rating:** 
 > **Description:** 
 > * **Core Intuition:** Designed for tasks with objective quality boundaries (e.g., Machine Translation). It penalizes sub-optimal outputs while heavily regularizing against deviation from the SFT baseline to prevent catastrophic forgetting.
+
+#### 9. [MC-GRPO: Median-Centered Group Relative Policy Optimization for Small-Rollout Reinforcement Learning](https://arxiv.org/abs/2601.22582) 
+* **Algorithm:** MC-GRPO 
+* **Venue/Year:** arXiv 2026 
+* **Reference Code:** [lotusroot-kim/MC-GRPO](https://github.com/lotusroot-kim/MC-GRPO) 
+* **Local PDF:** [MC-GRPO - Median-Centered Group Relative Policy Optimization for Small-Rollout Reinforcement Learning](<papers/Kim - 2026 - MC-GRPO - Median-Centered Group Relative Policy Optimization for Small-Rollout Reinforcement Learning.pdf>)
+* **Rating:** 
+> **Description:**
+> * **Core Intuition:** Designed for resource-constrained reinforcement learning with small rollout budgets. It mitigates advantage sign flips (which reverse update directions) caused by noisy mean baselines by using a far more robust median baseline. By sampling one extra rollout to act as the median and excluding it from backpropagation, it stabilizes optimization while preserving the core update cost of standard GRPO.
+> * **Mathematical Formulation:** $A_{i} = \frac{r_{i} - \text{median}(r_{1}, \dots, r_{G+1})}{\text{MAD}(r) + \epsilon}$
+
+#### 10. [AMIR-GRPO: Inducing Implicit Preference Signals into GRPO](https://arxiv.org/abs/2601.03661)
+* **Algorithm:** AMIR-GRPO 
+* **Venue/Year:** arXiv 2026 
+* **Reference Code:** [AmirHosseinYari2002/AMIR-GRPO](https://github.com/AmirHosseinYari2002/AMIR-GRPO) 
+* **Local PDF:** [AMIR-GRPO - Inducing Implicit Preference Signals into GRPO](<papers/Yari et al. - 2026 - AMIR-GRPO - Inducing Implicit Preference Signals into GRPO.pdf>)
+* **Rating:** 
+> **Description:**
+> * **Core Intuition:** Addresses GRPO's structural limitations, such as sequence-level length bias and underutilized preference signals caused by collapsing rankings into scalar objectives. It augments GRPO with an implicit DPO-style contrastive regularizer derived directly from intra-group reward rankings, requiring no additional human annotations. This amplifies the suppression of low-reward trajectories and transforms each rollout group into a denser set of supervision constraints.
+> * **Mathematical Formulation:** $\mathcal{J}_{AMIR-GRPO}(\theta)=\mathcal{J}_{GRPO}(\theta)+\lambda_{reg}\mathcal{J}_{pref}(\theta)$
+
+#### 11. [SetPO: Set-Level Policy Optimization for Diversity-Preserving LLM Reasoning](https://arxiv.org/abs/2602.01062)
+* **Algorithm:** SetPO 
+* **Venue/Year:** arXiv 2026 
+* **Local PDF:** [SetPO - Set-Level Policy Optimization for Diversity-Preserving LLM Reasoning](<papers/Li et al. - 2026 - SetPO - Set-Level Policy Optimization for Diversity-Preserving LLM Reasoning>)
+* **Rating:** 
+> **Description:**
+> * **Core Intuition:** Designed to address the decline in outcome diversity (mode collapse) often seen when finetuning LLMs with reinforcement learning. It introduces a set-level diversity objective by calculating the leave-one-out marginal contribution of each sampled trajectory based on semantic similarity. By integrating this as an advantage shaping term, it explicitly rewards rarer solutions, encouraging the model to explore and preserve multiple valid reasoning paths.
+> * **Mathematical Formulation:** $\hat{A}_i = \overline{A}_i + \lambda \left( D(\Omega) - D(\Omega \setminus \{o_i\}) \right)$ 
+
+#### 12. [F-GRPO: Don't Let Your Policy Learn the Obvious and Forget the Rare](https://arxiv.org/abs/2602.06717)
+* **Algorithm:** F-GRPO 
+* **Venue/Year:** arXiv 2026 
+* **Local PDF:** [F-GRPO - Dont Let Your Policy Learn the Obvious and Forget the Rare](<papers/Plyusov et al. - 2026 - F-GRPO - Dont Let Your Policy Learn the Obvious and Forget the Rare.pdf>)
+* **Rating:** 
+> **Description:**
+> * **Core Intuition:** Designed to prevent distribution sharpening in RLVR, where typical intermediate group sizes cause models to over-optimize common solutions and forget rare-correct trajectories. It mitigates this by applying a Focal loss-inspired scaling coefficient that down-weights advantage updates for high-success, easy prompts, preserving solution diversity without increasing computational costs.
+> * **Mathematical Formulation:** $\hat{A}_{i}^{F-GRPO}=(1-\hat{\mu}_{pos}(x))^\gamma \cdot \hat{A}_{i}^{GRPO}$ 
 ---
 
 ## 🌟 Useful Resources (Surveys & Codebases)
