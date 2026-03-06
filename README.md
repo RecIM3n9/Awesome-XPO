@@ -109,6 +109,86 @@ A structured and comprehensive reading list & resource tracker for Reinforcement
 * **Rating:** 
 > **Description:** 
 > * **Core Intuition:** Designed for tasks with objective quality boundaries (e.g., Machine Translation). It penalizes sub-optimal outputs while heavily regularizing against deviation from the SFT baseline to prevent catastrophic forgetting.
+
+#### 9. [Token-level Direct Preference Optimization](https://arxiv.org/abs/2404.10719)
+
+* **Algorithm:** TDPO
+* **Venue/Year:** ICML 2024
+* **Reference Code:** [Vchitect/TDPO (Official)](https://github.com/Vchitect/TDPO)
+* **Local PDF:** [Zeng et al. - 2024 - Token-level Direct Preference Optimization.pdf](<papers/Zeng et al. - 2024 - Token-level Direct Preference Optimization.pdf>) 
+* **Rating:**
+> **Description:**
+> * **Core Intuition:** Identifies that standard DPO treats the entire response as a single action, which leads to sparse rewards and poor credit assignment for long outputs. TDPO formulates alignment as a token-level Markov Decision Process (MDP), aligning the policy at the granularity of individual tokens by optimizing forward KL divergence.
+> * **Engineering Traits:** Significantly improves the quality of long-form generation and reasoning tasks without increasing the memory footprint compared to sequence-level DPO.
+> * **Mathematical Formulation:** Optimizes the token-level Q-value differences:
+>
+> $$\mathcal{L}_{\text{TDPO}} = -\mathbb{E}_{(x, y_w, y_l)} \left[ \sum_{t} \log \sigma \left( \hat{Q}_\theta(y_{w,t}) - \hat{Q}_\theta(y_{l,t}) \right) \right]$$
+
+#### 10. [Self-Play Preference Optimization for Language Model Alignment](https://arxiv.org/abs/2405.00675)
+* **Algorithm:** SPPO
+* **Venue/Year:** ArXiv 2024
+* **Reference Code:** [uclaml/SPPO (Official)](https://github.com/uclaml/SPPO)
+* **Local PDF:** [Wu et al. - 2024 - Self-Play Preference Optimization for Language Model Alignment.pdf](<papers/Wu et al. - 2024 - Self-Play Preference Optimization for Language Model Alignment.pdf>) 
+* **Rating:** 
+> **Description:**
+> * **Core Intuition:** Abandons the reliance on static human preference datasets. SPPO frames LLM alignment as a two-player zero-sum game where the model continuously plays against its own previous iterations to construct a Nash equilibrium, effectively bootstrapping its own alignment capabilities.
+> * **Engineering Traits:** Highly scalable and self-improving. It drastically reduces the need for external, massive human-annotated preference pairs, making it ideal for iterative data flywheels.
+> * **Mathematical Formulation:** Formulated as finding the policy $\pi$ that minimizes the maximum preference advantage of a challenger $\mu$:
+>
+> $$\min_{\pi} \max_{\mu} \mathbb{E}_{y_1 \sim \pi, y_2 \sim \mu} [ P(y_1 \succ y_2 | x) - P(y_2 \succ y_1 | x) ]$$
+
+#### 11. [Bottom-up Policy Optimization: Your Language Model Policy Secretly Contains Internal Policies](http://arxiv.org/abs/2512.19673) 
+* **Algorithm:** BUPO
+* **Venue/Year:** ArXiv 2025
+* **Reference Code:** [Trae1ounG/BuPO (Official)](https://github.com/Trae1ounG/BuPO)
+* **Local PDF:** [Tan et al. - 2026 - Bottom-up Policy Optimization Your Language Model Policy Secretly Contains Internal Policies.pdf](<papers\Tan et al. - 2026 - Bottom-up Policy Optimization Your Language Model Policy Secretly Contains Internal Policies.pdf>) 
+* **Rating:**
+> **Description:**
+> * **Core Intuition:** Challenges the standard view of an LLM as a monolithic policy. BUPO reveals that LLMs harbor multiple latent "internal policies" (e.g., tone, formatting, factual accuracy). It aligns the model by optimizing these disentangled sub-policies from the bottom up.
+> * **Engineering Traits:** Provides incredibly fine-grained control over specific generation attributes. It prevents the catastrophic forgetting of stylistic traits that often occurs during monolithic reward maximization.
+
+#### 12. [AT$^2$PO: Agentic Turn-based Policy Optimization via Tree Search](http://arxiv.org/abs/2601.04767)
+
+* **Algorithm:** AT$^2$PO
+* **Venue/Year:** ArXiv 2026
+* **Reference Code:** [zzfoutofspace/ATPO (Official)](https://github.com/zzfoutofspace/ATPO)
+* **Local PDF:** [Zong et al. - 2026 - AT$^2$PO Agentic Turn-based Policy Optimization via Tree Search.pdf](<papers/Zong et al. - 2026 - AT$^2$PO Agentic Turn-based Policy Optimization via Tree Search.pdf>) 
+* **Rating:** 
+> **Description:** 
+> * **Core Intuition:** Tailored specifically for complex, multi-turn agentic workflows (e.g., tool use, web browsing). It integrates look-ahead tree search (similar to MCTS) with policy optimization to evaluate the long-term viability of an action, rather than relying on sparse terminal rewards.
+> * **Engineering Traits:** Computationally heavier during the rollout phase due to tree exploration, but vastly more sample-efficient for tasks requiring long-horizon planning and sequential decision-making.
+
+#### 13. [REINFORCE++: An Efficient RLHF Algorithm with Robustness to Both Prompt and Reward Models](http://arxiv.org/abs/2501.03262)
+* **Algorithm:** REINFORCE++
+* **Venue/Year:** ArXiv 2025
+* **Reference Code:** [OpenRLHF (REINFORCE++)](https://github.com/OpenRLHF/OpenRLHF)
+* **Local PDF:** [Hu et al. - 2025 - REINFORCE++ an efficient RLHF algorithm with robustness to both prompt and reward models.pdf](<papers/Hu et al. - 2025 - REINFORCE++ an efficient RLHF algorithm with robustness to both prompt and reward models.pdf>) 
+* **Rating:** 
+> **Description:** 
+> * **Core Intuition:** Modernizes the classic REINFORCE algorithm for LLMs. It achieves PPO-level stability without a Critic network by introducing robust reward baseline estimation and PPO-style clipping mechanisms to handle high variance in prompt difficulties and RM scales.
+> * **Engineering Traits:** A highly practical middle-ground. By stripping away the Value Network (Critic), it saves massive VRAM, making online RL viable on hardware setups where PPO would OOM (Out of Memory).
+> * **Mathematical Formulation:** Utilizes a normalized advantage with a running baseline:
+>
+> $$\nabla J(\theta) = \mathbb{E}_{x, y \sim \pi_\theta} \left[ \left( \frac{r(x,y) - b(x)}{\sigma_R} - \beta \mathbb{D}_{\text{KL}} \right) \nabla_\theta \log \pi_\theta(y|x) \right]$$
+
+#### 14. [Single-stream Policy Optimization](http://arxiv.org/abs/2509.13232)
+* **Algorithm:** SSPO
+* **Venue/Year:** ArXiv 2025
+* **Reference Code:** ...
+* **Local PDF:** [Xu and Ding - 2025 - Single-stream Policy Optimization.pdf](<papers/Xu and Ding - 2025 - Single-stream Policy Optimization.pdf>) 
+* **Rating:** 
+> **Description:** 
+
+
+#### 15. [F-GRPO: Don't Let Your Policy Learn the Obvious and Forget the Rare](http://arxiv.org/abs/2602.06717) 
+* **Algorithm:** F-GRPO
+* **Venue/Year:** ArXiv 2026
+* **Reference Code:** ...
+* **Local PDF:** [Plyusov et al. - 2026 - F-GRPO Don't Let Your Policy Learn the Obvious and Forget the Rare.pdf](<papers\Plyusov et al. - 2026 - F-GRPO Don't Let Your Policy Learn the Obvious and Forget the Rare.pdf>) 
+* **Rating:** 
+> **Description:** 
+
+
 ---
 
 ## 🌟 Useful Resources (Surveys & Codebases)
