@@ -118,7 +118,9 @@ A structured and comprehensive reading list & resource tracker for Reinforcement
 * **Rating:** 
 > **Description:**
 > * **Core Intuition:** Designed for resource-constrained reinforcement learning with small rollout budgets. It mitigates advantage sign flips (which reverse update directions) caused by noisy mean baselines by using a far more robust median baseline. By sampling one extra rollout to act as the median and excluding it from backpropagation, it stabilizes optimization while preserving the core update cost of standard GRPO.
-> * **Mathematical Formulation:** $A_{i} = \frac{r_{i} - \text{median}(r_{1}, \dots, r_{G+1})}{\text{MAD}(r) + \epsilon}$
+> * **Mathematical Formulation:**
+> 
+> * $$A_{i} = \frac{r_{i} - \text{median}(r_{1}, \dots, r_{G+1})}{\text{MAD}(r) + \epsilon}$$
 
 #### 10. [AMIR-GRPO: Inducing Implicit Preference Signals into GRPO](https://arxiv.org/abs/2601.03661)
 * **Algorithm:** AMIR-GRPO 
@@ -128,7 +130,9 @@ A structured and comprehensive reading list & resource tracker for Reinforcement
 * **Rating:** 
 > **Description:**
 > * **Core Intuition:** Addresses GRPO's structural limitations, such as sequence-level length bias and underutilized preference signals caused by collapsing rankings into scalar objectives. It augments GRPO with an implicit DPO-style contrastive regularizer derived directly from intra-group reward rankings, requiring no additional human annotations. This amplifies the suppression of low-reward trajectories and transforms each rollout group into a denser set of supervision constraints.
-> * **Mathematical Formulation:** $\mathcal{J}_{AMIR-GRPO}(\theta)=\mathcal{J}_{GRPO}(\theta)+\lambda_{reg}\mathcal{J}_{pref}(\theta)$
+> * **Mathematical Formulation:**
+> 
+> * $$\mathcal{J}_{AMIR-GRPO}(\theta)=\mathcal{J}_{GRPO}(\theta)+\lambda_{reg}\mathcal{J}_{pref}(\theta)$$
 
 #### 11. [SetPO: Set-Level Policy Optimization for Diversity-Preserving LLM Reasoning](https://arxiv.org/abs/2602.01062)
 * **Algorithm:** SetPO 
@@ -137,7 +141,9 @@ A structured and comprehensive reading list & resource tracker for Reinforcement
 * **Rating:** 
 > **Description:**
 > * **Core Intuition:** Designed to address the decline in outcome diversity (mode collapse) often seen when finetuning LLMs with reinforcement learning. It introduces a set-level diversity objective by calculating the leave-one-out marginal contribution of each sampled trajectory based on semantic similarity. By integrating this as an advantage shaping term, it explicitly rewards rarer solutions, encouraging the model to explore and preserve multiple valid reasoning paths.
-> * **Mathematical Formulation:** $\hat{A}_i = \overline{A}_i + \lambda \left( D(\Omega) - D(\Omega \setminus \{o_i\}) \right)$ 
+> * **Mathematical Formulation:**
+> 
+> * $$\hat{A}_i = \overline{A}_i + \lambda \left( D(\Omega) - D(\Omega \setminus \{o_i\}) \right)$$ 
 
 #### 12. [F-GRPO: Don't Let Your Policy Learn the Obvious and Forget the Rare](https://arxiv.org/abs/2602.06717)
 * **Algorithm:** F-GRPO 
@@ -146,7 +152,10 @@ A structured and comprehensive reading list & resource tracker for Reinforcement
 * **Rating:** 
 > **Description:**
 > * **Core Intuition:** Designed to prevent distribution sharpening in RLVR, where typical intermediate group sizes cause models to over-optimize common solutions and forget rare-correct trajectories. It mitigates this by applying a Focal loss-inspired scaling coefficient that down-weights advantage updates for high-success, easy prompts, preserving solution diversity without increasing computational costs.
-> * **Mathematical Formulation:** $\hat{A}_{i}^{F-GRPO}=(1-\hat{\mu}_{pos}(x))^\gamma \cdot \hat{A}_{i}^{GRPO}$ 
+> * **Mathematical Formulation:**
+> 
+> * $$\hat{A}_{i}^{F-GRPO}=(1-\hat{\mu}_{pos}(x))^\gamma \cdot \hat{A}_{i}^{GRPO}$$
+ 
 ---
 
 ## 🌟 Useful Resources (Surveys & Codebases)
