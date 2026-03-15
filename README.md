@@ -21,11 +21,11 @@ A structured and project-oriented reading list for preference optimization and R
 > * **Engineering Traits:** Strong but heavy. PPO remains the canonical online RL baseline, yet its critic, reward model, reference model, and hyperparameter sensitivity make it poorly matched to small-model, low-budget settings.
 > * **Mathematical Formulation:** The standard clipped surrogate is
 >
-> $$L_{\text{PPO}}(\theta)=\hat{\mathbb{E}}\left[\min\left(r_t(\theta)\hat A_t,\mathrm{clip}(r_t(\theta),1-\epsilon,1+\epsilon)\hat A_t\right)\right],\quad r_t(\theta)=\frac{\pi_\theta(a_t\mid s_t)}{\pi_{\theta_{\text{old}}}(a_t\mid s_t)}$$
+> $$L_{PPO}(\theta)=\hat{\mathbb{E}}[\min(r_t(\theta)\hat A_t,\mathrm{clip}(r_t(\theta),1-\epsilon,1+\epsilon)\hat A_t)],\quad r_t(\theta)=\frac{\pi_\theta(a_t\mid s_t)}{\pi_{\theta_{old}}(a_t\mid s_t)}$$
 >
 > * **Policy Update:** In RLHF, one typically optimizes
 >
-> $$\max_\theta \; L_{\text{PPO}}(\theta)-\beta\,\mathbb{E}_{x,y\sim\pi_\theta}\left[D_{\mathrm{KL}}\big(\pi_\theta(\cdot\mid x)\|\pi_{\mathrm{ref}}(\cdot\mid x)\big)\right]$$
+> $$\max_\theta \; L_{PPO}(\theta)-\beta\,\mathbb{E}_{x,y\sim\pi_\theta}[D_{KL}(\pi_\theta(\cdot\mid x)\|\pi_{ref}(\cdot\mid x))]$$
 >
 > with gradient ascent on the actor and a separate value-loss update for the critic.
 
@@ -42,7 +42,7 @@ A structured and project-oriented reading list for preference optimization and R
 > * **Engineering Traits:** The strongest default baseline for SLM studies: stable, efficient, and highly interpretable under the GITA lens.
 > * **Mathematical Formulation:** For a preference pair $(x,y_w,y_l)$, DPO minimizes
 >
-> $$\mathcal L_{\text{DPO}}=-\log\sigma\left(\beta\log\frac{\pi_\theta(y_w\mid x)}{\pi_{\text{ref}}(y_w\mid x)}-\beta\log\frac{\pi_\theta(y_l\mid x)}{\pi_{\text{ref}}(y_l\mid x)}\right)$$
+> $$\mathcal L_{DPO}=-\log\sigma(\beta\log\frac{\pi_\theta(y_w\mid x)}{\pi_{ref}(y_w\mid x)}-\beta\log\frac{\pi_\theta(y_l\mid x)}{\pi_{ref}(y_l\mid x)})$$
 >
 > * **Policy Update:** Gradient descent on this logistic loss implicitly moves the policy toward the preferred sample and away from the rejected one without training a separate reward model.
 
@@ -57,9 +57,9 @@ A structured and project-oriented reading list for preference optimization and R
 > * **Engineering Traits:** Attractive for SLMs when pairwise data is scarce or noisy, though its pointwise supervision can be less expressive than strong pairwise preference data.
 > * **Mathematical Formulation:** A representative KTO loss can be written as
 >
-> $$\mathcal L_{\text{KTO}}=-\mathbb E_{(x,y)\sim\mathcal D^+}\left[\log\sigma\big(\beta z_\theta(x,y)-\tau_+\big)\right]-\mathbb E_{(x,y)\sim\mathcal D^-}\left[\log\sigma\big(\tau_- - \beta z_\theta(x,y)\big)\right]$$
+> $$\mathcal L_{KTO}=-\mathbb E_{(x,y)\sim\mathcal D^+}[\log\sigma(\beta z_\theta(x,y)-\tau_+)]-\mathbb E_{(x,y)\sim\mathcal D^-}[\log\sigma(\tau_- - \beta z_\theta(x,y))]$$
 >
-> where $z_\theta(x,y)=\log \pi_\theta(y\mid x)-\log \pi_{\text{ref}}(y\mid x)$.
+> where $z_\theta(x,y)=\log \pi_\theta(y\mid x)-\log \pi_{ref}(y\mid x)$.
 > * **Policy Update:** Positive examples increase relative log-likelihood, while undesirable examples push it down with asymmetric prospect-style treatment.
 
 #### 3. [ORPO: Monolithic Preference Optimization without Reference Model](https://arxiv.org/abs/2403.07691)
@@ -73,11 +73,11 @@ A structured and project-oriented reading list for preference optimization and R
 > * **Engineering Traits:** Very SLM-friendly. Low memory, simple training, and good compatibility with LoRA make it one of the best resource-constrained baselines.
 > * **Mathematical Formulation:** The ORPO objective is
 >
-> $$\mathcal L_{\text{ORPO}}=\mathcal L_{\text{SFT}}(x,y_w)+\lambda\,\mathcal L_{\text{OR}}(x,y_w,y_l)$$
+> $$\mathcal L_{ORPO}=\mathcal L_{SFT}(x,y_w)+\lambda\,\mathcal L_{OR}(x,y_w,y_l)$$
 >
 > with
 >
-> $$\mathcal L_{\text{OR}}=-\log\sigma\left(\log\frac{\mathrm{odds}_\theta(y_w\mid x)}{\mathrm{odds}_\theta(y_l\mid x)}\right),\quad \mathrm{odds}_\theta(y\mid x)=\frac{\pi_\theta(y\mid x)}{1-\pi_\theta(y\mid x)}$$
+> $$\mathcal L_{OR}=-\log\sigma(\log\frac{\mathrm{odds}_\theta(y_w\mid x)}{\mathrm{odds}_\theta(y_l\mid x)}),\quad \mathrm{odds}_\theta(y\mid x)=\frac{\pi_\theta(y\mid x)}{1-\pi_\theta(y\mid x)}$$
 >
 > * **Policy Update:** Each step jointly preserves next-token imitation on the chosen response and increases the chosen-vs-rejected odds ratio.
 
@@ -92,7 +92,7 @@ A structured and project-oriented reading list for preference optimization and R
 > * **Engineering Traits:** More conservative than DPO and often more retention-friendly, making it especially relevant for capacity-limited models.
 > * **Mathematical Formulation:** IPO replaces the DPO logistic objective with a squared error:
 >
-> $$\mathcal L_{\text{IPO}}=\left(\log\frac{\pi_\theta(y_w\mid x)}{\pi_{\text{ref}}(y_w\mid x)}-\log\frac{\pi_\theta(y_l\mid x)}{\pi_{\text{ref}}(y_l\mid x)}-\frac{1}{2\beta}\right)^2$$
+> $$\mathcal L_{IPO}=(\log\frac{\pi_\theta(y_w\mid x)}{\pi_{ref}(y_w\mid x)}-\log\frac{\pi_\theta(y_l\mid x)}{\pi_{ref}(y_l\mid x)}-\frac{1}{2\beta})^2$$
 >
 > * **Policy Update:** The update pushes the pairwise log-ratio toward a target margin instead of unboundedly sharpening preferences.
 
@@ -107,11 +107,11 @@ A structured and project-oriented reading list for preference optimization and R
 > * **Engineering Traits:** Strong practical candidate for SLMs because it is light, reference-free, and explicitly engages with verbosity bias.
 > * **Mathematical Formulation:** Define the implicit reward
 >
-> $$r_{\text{SimPO}}(x,y)=\frac{\beta}{|y|}\log\pi_\theta(y\mid x)$$
+> $$r_{SimPO}(x,y)=\frac{\beta}{|y|}\log\pi_\theta(y\mid x)$$
 >
 > and optimize
 >
-> $$\mathcal L_{\text{SimPO}}=-\log\sigma\left(r_{\text{SimPO}}(x,y_w)-r_{\text{SimPO}}(x,y_l)-\gamma\right)$$
+> $$\mathcal L_{SimPO}=-\log\sigma(r_{SimPO}(x,y_w)-r_{SimPO}(x,y_l)-\gamma)$$
 >
 > * **Policy Update:** Preferred outputs are pushed above rejected ones by a target margin $\gamma$, while length normalization suppresses verbosity-driven reward inflation.
 
@@ -126,7 +126,7 @@ A structured and project-oriented reading list for preference optimization and R
 > * **Engineering Traits:** Historically important because it shows that preference alignment can be effective without the full RLHF stack, but it is now more of a reference point than a primary frontier method.
 > * **Mathematical Formulation:** A representative calibration loss is a pairwise ranking objective over sequence scores $s_\theta(x,y)$:
 >
-> $$\mathcal L_{\text{SLiC-HF}}=-\log\sigma\big(s_\theta(x,y_w)-s_\theta(x,y_l)\big)$$
+> $$\mathcal L_{SLiC-HF}=-\log\sigma(s_\theta(x,y_w)-s_\theta(x,y_l))$$
 >
 > with $s_\theta$ usually derived from normalized sequence log-likelihood.
 > * **Policy Update:** Gradient descent calibrates preferred sequences upward and dispreferred ones downward without a separate online RL phase.
@@ -154,7 +154,7 @@ A structured and project-oriented reading list for preference optimization and R
 > * **Engineering Traits:** Particularly relevant to the project's Dimension 3 because it directly attacks sparse, coarse credit assignment in long outputs.
 > * **Mathematical Formulation:** TDPO replaces one global comparison with token-level comparisons:
 >
-> $$\mathcal L_{\text{TDPO}}=-\sum_t \log\sigma\left(\hat Q_\theta(x,y_w,t)-\hat Q_\theta(x,y_l,t)\right)$$
+> $$\mathcal L_{TDPO}=-\sum_t \log\sigma(\hat Q_\theta(x,y_w,t)-\hat Q_\theta(x,y_l,t))$$
 >
 > where $\hat Q_\theta$ is a token-level preference score derived from policy logits and reference calibration.
 > * **Policy Update:** Tokens that causally support the preferred trajectory get stronger positive gradients than irrelevant filler tokens.
@@ -170,7 +170,7 @@ A structured and project-oriented reading list for preference optimization and R
 > * **Engineering Traits:** Useful as a broader preference-learning reference, but less central than DPO/KTO/ORPO/SimPO for the project's main SLM matrix.
 > * **Mathematical Formulation:** PRO typically optimizes a listwise contrastive ranking loss such as
 >
-> $$\mathcal L_{\text{PRO}}=-\log\frac{\exp(s_\theta(y^+))}{\sum_{j=1}^K \exp(s_\theta(y_j))}$$
+> $$\mathcal L_{PRO}=-\log\frac{\exp(s_\theta(y^+))}{\sum_{j=1}^K \exp(s_\theta(y_j))}$$
 >
 > * **Policy Update:** Better-ranked completions are assigned larger likelihood mass relative to the full candidate list.
 
@@ -185,7 +185,7 @@ A structured and project-oriented reading list for preference optimization and R
 > * **Engineering Traits:** Valuable for discussing retention-sensitive objectives, though its main empirical success comes from MT rather than generic SLM alignment.
 > * **Mathematical Formulation:** CPO augments preference optimization with an explicit regularizer to stay near the supervised model:
 >
-> $$\mathcal L_{\text{CPO}}=\mathcal L_{\text{contrastive}}+\lambda\,D_{\mathrm{KL}}\big(\pi_\theta\|\pi_{\text{SFT}}\big)$$
+> $$\mathcal L_{CPO}=\mathcal L_{contrastive}+\lambda\,D_{KL}(\pi_\theta\|\pi_{SFT})$$
 >
 > * **Policy Update:** The policy is updated to separate good and bad outputs while explicitly limiting drift from the base model.
 
@@ -200,7 +200,7 @@ A structured and project-oriented reading list for preference optimization and R
 > * **Engineering Traits:** Interesting for scalable data generation, but harder to keep controlled in a mechanism-focused SLM study.
 > * **Mathematical Formulation:** SPPO can be viewed as solving a min-max preference game:
 >
-> $$\min_\pi\max_\mu\; \mathbb E_{y_1\sim\pi, y_2\sim\mu}\left[P(y_1\succ y_2\mid x)-P(y_2\succ y_1\mid x)\right]$$
+> $$\min_\pi\max_\mu\; \mathbb E_{y_1\sim\pi, y_2\sim\mu}[P(y_1\succ y_2\mid x)-P(y_2\succ y_1\mid x)]$$
 >
 > * **Policy Update:** The current policy is repeatedly updated against a challenger policy induced by previous policy snapshots or self-play opponents.
 
@@ -221,10 +221,10 @@ A structured and project-oriented reading list for preference optimization and R
 >
 > and the clipped policy objective is
 >
-> $$L_{\text{GRPO}}(\theta)=\hat{\mathbb E}_{i,j,t}\left[\min\left(\rho_{i,j,t}(\theta)\hat A_{i,j},\mathrm{clip}(\rho_{i,j,t}(\theta),1-\epsilon,1+\epsilon)\hat A_{i,j}\right)\right]$$
+> $$L_{GRPO}(\theta)=\hat{\mathbb E}_{i,j,t}[\min(\rho_{i,j,t}(\theta)\hat A_{i,j},\mathrm{clip}(\rho_{i,j,t}(\theta),1-\epsilon,1+\epsilon)\hat A_{i,j})]$$
 >
-> where $\rho_{i,j,t}(\theta)=\pi_\theta(o_{i,j,t}\mid x_i,o_{i,j,<t})/\pi_{\theta_{\text{old}}}(o_{i,j,t}\mid x_i,o_{i,j,<t})$.
-> * **Policy Update:** Update by gradient ascent on $L_{\text{GRPO}}-\beta D_{\mathrm{KL}}(\pi_\theta\|\pi_{\text{ref}})$.
+> where $\rho_{i,j,t}(\theta)=\pi_\theta(o_{i,j,t}\mid x_i,o_{i,j,<t})/\pi_{\theta_{old}}(o_{i,j,t}\mid x_i,o_{i,j,<t})$.
+> * **Policy Update:** Update by gradient ascent on $L_{GRPO}-\beta D_{KL}(\pi_\theta\|\pi_{ref})$.
 
 #### 13. [REINFORCE++: An Efficient RLHF Algorithm with Robustness to Both Prompt and Reward Models](http://arxiv.org/abs/2501.03262)
 * **Algorithm:** REINFORCE++
@@ -237,7 +237,7 @@ A structured and project-oriented reading list for preference optimization and R
 > * **Engineering Traits:** One of the most important online-RL methods for this project because it offers a lighter alternative to PPO and a cleaner comparison against GRPO on SLM hardware.
 > * **Mathematical Formulation:** A representative REINFORCE++ gradient is
 >
-> $$\nabla J(\theta)=\mathbb E_{x,y\sim\pi_\theta}\left[\left(\frac{r(x,y)-b(x)}{\sigma_R}-\beta D_{\mathrm{KL}}\right)\nabla_\theta\log\pi_\theta(y\mid x)\right]$$
+> $$\nabla J(\theta)=\mathbb E_{x,y\sim\pi_\theta}[(\frac{r(x,y)-b(x)}{\sigma_R}-\beta D_{\mathrm{KL}})\nabla_\theta\log\pi_\theta(y\mid x)]$$
 >
 > with robust prompt-wise baselines and reward normalization.
 > * **Policy Update:** REINFORCE++ performs policy-gradient ascent directly on sampled trajectories, but stabilizes the update magnitude with normalized rewards and clipping-inspired controls.
@@ -253,11 +253,11 @@ A structured and project-oriented reading list for preference optimization and R
 > * **Engineering Traits:** A key extension for the project because it changes credit-assignment granularity and may trade lower variance for coarser supervision.
 > * **Mathematical Formulation:** Define a sequence-level ratio
 >
-> $$\rho_i^{\text{seq}}(\theta)=\frac{\pi_\theta(y_i\mid x_i)}{\pi_{\theta_{\text{old}}}(y_i\mid x_i)}=\exp\left(\sum_t \log\frac{\pi_\theta(y_{i,t}\mid x_i,y_{i,<t})}{\pi_{\theta_{\text{old}}}(y_{i,t}\mid x_i,y_{i,<t})}\right)$$
+> $$\rho_i^{seq}(\theta)=\frac{\pi_\theta(y_i\mid x_i)}{\pi_{\theta_{old}}(y_i\mid x_i)}=\exp(\sum_t \log\frac{\pi_\theta(y_{i,t}\mid x_i,y_{i,<t})}{\pi_{\theta_{old}}(y_{i,t}\mid x_i,y_{i,<t})})$$
 >
 > and optimize
 >
-> $$L_{\text{GSPO}}(\theta)=\hat{\mathbb E}_i\left[\min\left(\rho_i^{\text{seq}}\hat A_i,\mathrm{clip}(\rho_i^{\text{seq}},1-\epsilon,1+\epsilon)\hat A_i\right)\right]$$
+> $$L_{GSPO}(\theta)=\hat{\mathbb E}_i[\min(\rho_i^{seq}\hat A_i,\mathrm{clip}(\rho_i^{seq},1-\epsilon,1+\epsilon)\hat A_i)]$$
 >
 > * **Policy Update:** All tokens in a sequence share one clipped importance ratio, which reduces variance but coarsens token-level credit assignment.
 
@@ -272,7 +272,7 @@ A structured and project-oriented reading list for preference optimization and R
 > * **Engineering Traits:** Directly relevant to the project's Dimension 2 because it targets update geometry rather than only reward design.
 > * **Mathematical Formulation:** BandPO replaces the fixed clip region with adaptive bounds $[\ell_t,u_t]$ depending on action probability and trust-region geometry:
 >
-> $$L_{\text{BandPO}}(\theta)=\hat{\mathbb E}_t\left[\min\left(r_t(\theta)\hat A_t,\mathrm{clip}_{[\ell_t,u_t]}(r_t(\theta))\hat A_t\right)\right]$$
+> $$L_{BandPO}(\theta)=\hat{\mathbb E}_t[\min(r_t(\theta)\hat A_t,\mathrm{clip}_{[\ell_t,u_t]}(r_t(\theta))\hat A_t)]$$
 >
 > * **Policy Update:** The policy is updated with larger freedom on informative low-probability actions and tighter constraints on unstable high-ratio updates.
 
@@ -287,7 +287,7 @@ A structured and project-oriented reading list for preference optimization and R
 > * **Engineering Traits:** Highly relevant for SLMs because small models are more likely to forget rare-correct modes under group-normalized training.
 > * **Mathematical Formulation:** F-GRPO rescales the GRPO advantage by prompt difficulty:
 >
-> $$\hat A_i^{\text{F-GRPO}}=(1-\hat\mu_{\text{pos}}(x_i))^\gamma\,\hat A_i^{\text{GRPO}}$$
+> $$\hat A_i^{F-GRPO}=(1-\hat\mu_{pos}(x_i))^\gamma\,\hat A_i^{GRPO}$$
 >
 > and plugs the reweighted advantage into the usual GRPO clipped objective.
 > * **Policy Update:** Easy prompts receive smaller gradients, preserving capacity for rare but useful trajectories.
@@ -303,7 +303,7 @@ A structured and project-oriented reading list for preference optimization and R
 > * **Engineering Traits:** More important theoretically than as a default benchmark, but very useful for the project's interpretive framing.
 > * **Mathematical Formulation:** In the variational f-divergence view, one optimizes an objective of the form
 >
-> $$L_{f\text{-GRPO}}(\theta)=\mathbb E\left[T_\phi(r)\right]-\mathbb E\left[f^*\big(T_\phi(r)\big)\right]$$
+> $$L_{f-GRPO}(\theta)=\mathbb E[T_\phi(r)]-\mathbb E[f^*(T_\phi(r))]$$
 >
 > where $T_\phi$ is a variational critic over policy ratios or rewards and $f^*$ is the convex conjugate of the chosen divergence.
 > * **Policy Update:** Different $f$ choices yield different gradient weighting schemes, changing how aggressively high-reward trajectories dominate policy updates.
@@ -334,9 +334,9 @@ A structured and project-oriented reading list for preference optimization and R
 > * **Engineering Traits:** Strong fit for this project because it explicitly connects offline preference signals and online verifiable rewards.
 > * **Mathematical Formulation:** The hybrid objective is
 >
-> $$\mathcal J_{\text{AMIR-GRPO}}(\theta)=\mathcal J_{\text{GRPO}}(\theta)+\lambda_{\text{reg}}\,\mathcal J_{\text{pref}}(\theta)$$
+> $$\mathcal J_{AMIR-GRPO}(\theta)=\mathcal J_{GRPO}(\theta)+\lambda_{reg}\,\mathcal J_{pref}(\theta)$$
 >
-> where $\mathcal J_{\text{pref}}$ is a DPO-like contrastive regularizer built from intra-group reward ordering.
+> where $\mathcal J_{pref}$ is a DPO-like contrastive regularizer built from intra-group reward ordering.
 > * **Policy Update:** Policy updates are guided both by scalar group reward advantages and by pairwise ranking relations inside each sampled group.
 
 #### 20. [Rewards as Labels: Revisiting RLVR from a Classification Perspective](https://arxiv.org/abs/2602.05630)
@@ -350,7 +350,7 @@ A structured and project-oriented reading list for preference optimization and R
 > * **Engineering Traits:** Extremely important for the project's Dimension 3 because it directly diagnoses gradient misassignment in GRPO-like methods and reports strong 1.5B results.
 > * **Mathematical Formulation:** REAL replaces scalar-weighted policy gradients with a label-based classification loss, e.g.
 >
-> $$\mathcal L_{\text{REAL}}=\mathrm{BCE}(h_\theta(x,y),\,\mathbf 1[r(x,y)>0])$$
+> $$\mathcal L_{REAL}=\mathrm{BCE}(h_\theta(x,y),\,1[r(x,y)>0])$$
 >
 > optionally with anchor logits for calibration.
 > * **Policy Update:** Correct rollouts and incorrect rollouts receive bounded, monotone classification gradients instead of unstable reward-proportional weights.
@@ -366,9 +366,9 @@ A structured and project-oriented reading list for preference optimization and R
 > * **Engineering Traits:** Directly aligned with the project's planned pathology analysis around verbosity, reward coupling, and length collapse.
 > * **Mathematical Formulation:** LUSPO uses a length-unbiased sequence ratio, conceptually normalizing the log-ratio by sequence length:
 >
-> $$\rho_i^{\text{LU}}(\theta)=\exp\left(\frac{1}{|y_i|}\sum_t \log\frac{\pi_\theta(y_{i,t}\mid x_i,y_{i,<t})}{\pi_{\theta_{\text{old}}}(y_{i,t}\mid x_i,y_{i,<t})}\right)$$
+> $$\rho_i^{LU}(\theta)=\exp(\frac{1}{|y_i|}\sum_t \log\frac{\pi_\theta(y_{i,t}\mid x_i,y_{i,<t})}{\pi_{\theta_{old}}(y_{i,t}\mid x_i,y_{i,<t})})$$
 >
-> and then applies a clipped sequence-level objective using $\rho_i^{\text{LU}}$.
+> and then applies a clipped sequence-level objective using $\rho_i^{LU}$.
 > * **Policy Update:** This prevents long responses from receiving systematically inflated or deflated updates purely because of token count.
 
 #### 22. [Orchestrating Tokens and Sequences: Dynamic Hybrid Policy Optimization for RLVR](https://arxiv.org/abs/2601.05607)
@@ -382,7 +382,7 @@ A structured and project-oriented reading list for preference optimization and R
 > * **Engineering Traits:** One of the clearest algorithmic probes for the project's credit-assignment-resolution thesis.
 > * **Mathematical Formulation:** A generic DHPO objective has two clipped branches:
 >
-> $$L_{\text{DHPO}}=\alpha\,L_{\text{token}}+(1-\alpha)\,L_{\text{seq}}$$
+> $$L_{DHPO}=\alpha\,L_{token}+(1-\alpha)\,L_{seq}$$
 >
 > where each branch uses its own importance ratio and trust region before the weighted combination.
 > * **Policy Update:** The optimizer interpolates between fine-grained token credit and stable sequence-level credit based on a mixing rule or entropy-guided schedule.
@@ -398,7 +398,7 @@ A structured and project-oriented reading list for preference optimization and R
 > * **Engineering Traits:** Especially relevant when studying whether finer-than-sequence but coarser-than-token credit improves SLM stability.
 > * **Mathematical Formulation:** Let $s$ index sentence spans inside a response. SSPO defines
 >
-> $$\rho_{i,s}(\theta)=\frac{\pi_\theta(y_{i,s}\mid x_i,y_{i,<s})}{\pi_{\theta_{\text{old}}}(y_{i,s}\mid x_i,y_{i,<s})}$$
+> $$\rho_{i,s}(\theta)=\frac{\pi_\theta(y_{i,s}\mid x_i,y_{i,<s})}{\pi_{\theta_{old}}(y_{i,s}\mid x_i,y_{i,<s})}$$
 >
 > and applies PPO-style clipping at the sentence level.
 > * **Policy Update:** Entire responses are no longer clipped by one scalar, but the algorithm also avoids the highest variance of fully token-level credit assignment.
@@ -414,7 +414,7 @@ A structured and project-oriented reading list for preference optimization and R
 > * **Engineering Traits:** Useful for studying diversity retention and exploration, though less central than GSPO/REAL/LUSPO for the main matrix.
 > * **Mathematical Formulation:** SetPO augments the base advantage with a leave-one-out diversity contribution:
 >
-> $$\hat A_i^{\text{SetPO}}=\bar A_i+\lambda\left(D(\Omega)-D(\Omega\setminus\{o_i\})\right)$$
+> $$\hat A_i^{SetPO}=\bar A_i+\lambda(D(\Omega)-D(\Omega\setminus\{o_i\}))$$
 >
 > * **Policy Update:** Trajectories that improve group diversity receive extra positive credit even if their scalar reward is not maximal.
 
@@ -431,7 +431,7 @@ A structured and project-oriented reading list for preference optimization and R
 > * **Engineering Traits:** Highly relevant to the project's Dimension 3 because it directly addresses feedback-resolution loss under multi-reward supervision, and also relevant to Dimension 2 because multi-objective updates can become unstable on SLMs.
 > * **Mathematical Formulation:** Instead of normalizing only a summed reward, GDPO normalizes each reward channel separately and then aggregates them:
 >
-> $$\hat A_i^{\text{GDPO}}=\sum_{m=1}^{M}\lambda_m\frac{r_i^{(m)}-\mu^{(m)}}{\sigma^{(m)}+\epsilon}$$
+> $$\hat A_i^{GDPO}=\sum_{m=1}^{M}\lambda_m\frac{r_i^{(m)}-\mu^{(m)}}{\sigma^{(m)}+\epsilon}$$
 >
 > where $m$ indexes reward channels and $(\mu^{(m)},\sigma^{(m)})$ are group-wise statistics for reward dimension $m$.
 > * **Policy Update:** The decoupled advantage is then inserted into a GRPO/PPO-style clipped objective, preserving relative differences among multiple rewards rather than collapsing them into one noisy scalar.
@@ -447,7 +447,7 @@ A structured and project-oriented reading list for preference optimization and R
 > * **Engineering Traits:** Very relevant to Dimension 1 and one of the few recent papers explicitly centered on sub-8B forgetting behavior.
 > * **Mathematical Formulation:** A representative GDPO-style objective compares grouped preferred and non-preferred responses under a reference-regularized margin:
 >
-> $$\mathcal L_{\text{GDPO}}=-\log\sigma\left(\beta\big(\Delta_\theta^{\text{group}}-\Delta_{\text{ref}}^{\text{group}}\big)\right)+\lambda D_{\mathrm{KL}}(\pi_\theta\|\pi_{\text{ref}})$$
+> $$\mathcal L_{GDPO}=-\log\sigma(\beta(\Delta_\theta^{group}-\Delta_{ref}^{group}))+\lambda D_{KL}(\pi_\theta\|\pi_{ref})$$
 >
 > * **Policy Update:** Group-level preference gradients are combined with explicit anchoring to reduce excessive drift and forgetting.
 
@@ -462,7 +462,7 @@ A structured and project-oriented reading list for preference optimization and R
 > * **Engineering Traits:** Important for the project's extension line on off-policy GRPO-style methods and data efficiency under constrained compute.
 > * **Mathematical Formulation:** Off-policy trajectories from a replay buffer are reweighted and selected according to policy-improvement criteria, giving a batch objective of the generic form
 >
-> $$L_{\text{BAPO}}(\theta)=\mathbb E_{(x,y)\sim\mathcal B}\left[w(x,y)\,\hat A(x,y)\,\log\pi_\theta(y\mid x)\right]$$
+> $$L_{BAPO}(\theta)=\mathbb E_{(x,y)\sim\mathcal B}[w(x,y)\,\hat A(x,y)\,\log\pi_\theta(y\mid x)]$$
 >
 > * **Policy Update:** The batch sampler adaptively favors historically difficult or high-value samples rather than sampling only fresh on-policy generations.
 
@@ -477,7 +477,7 @@ A structured and project-oriented reading list for preference optimization and R
 > * **Engineering Traits:** Strong systems relevance and useful for discussing how real-world RL training is often off-policy by construction.
 > * **Mathematical Formulation:** The core update uses a lagged-behavior-policy correction
 >
-> $$L_{\text{OAPL}}(\theta)=\mathbb E_{y\sim\pi_{\text{lag}}}\left[w_\theta(y\mid x)\,\hat A(y,x)\right],\quad w_\theta(y\mid x)=\frac{\pi_\theta(y\mid x)}{\pi_{\text{lag}}(y\mid x)}$$
+> $$L_{OAPL}(\theta)=\mathbb E_{y\sim\pi_{lag}}[w_\theta(y\mid x)\,\hat A(y,x)],\quad w_\theta(y\mid x)=\frac{\pi_\theta(y\mid x)}{\pi_{lag}(y\mid x)}$$
 >
 > * **Policy Update:** This makes policy lag an explicit part of the objective rather than a hidden implementation artifact.
 
@@ -492,7 +492,7 @@ A structured and project-oriented reading list for preference optimization and R
 > * **Engineering Traits:** More infrastructure-driven than mainline SLM alignment, but highly useful for scaling discussions and asynchronous training caveats.
 > * **Mathematical Formulation:** VCPO rescales the policy update with ESS-aware step control:
 >
-> $$\eta_{\text{eff}}=\eta\cdot g(\mathrm{ESS}(w)),\quad \mathrm{ESS}(w)=\frac{(\sum_i w_i)^2}{\sum_i w_i^2}$$
+> $$\eta_{eff}=\eta\cdot g(\mathrm{ESS}(w)),\quad \mathrm{ESS}(w)=\frac{(\sum_i w_i)^2}{\sum_i w_i^2}$$
 >
 > and combines it with a minimum-variance off-policy baseline.
 > * **Policy Update:** When stale rollouts cause ESS collapse, the learning rate is automatically damped to avoid unstable updates.
@@ -508,7 +508,7 @@ A structured and project-oriented reading list for preference optimization and R
 > * **Engineering Traits:** Valuable for thinking about sparse-feedback regimes, though it is best treated as an advanced extension rather than a primary benchmark.
 > * **Mathematical Formulation:** A generic HAPO-style objective combines RL with hindsight anchoring:
 >
-> $$\mathcal J_{\text{HAPO}}=\mathcal J_{\text{RL}}+\lambda_t\,\mathcal J_{\text{anchor}}$$
+> $$\mathcal J_{HAPO}=\mathcal J_{RL}+\lambda_t\,\mathcal J_{anchor}$$
 >
 > where $\lambda_t$ is adaptively gated and decays as the policy becomes competent.
 > * **Policy Update:** Failed trajectories receive temporary teacher-guided correction, but the anchoring term anneals away to recover asymptotically on-policy learning.
