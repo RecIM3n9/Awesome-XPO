@@ -21,7 +21,7 @@ A structured and project-oriented reading list for preference optimization and R
 > * **Engineering Traits:** Strong but heavy. PPO remains the canonical online RL baseline, yet its critic, reward model, reference model, and hyperparameter sensitivity make it poorly matched to small-model, low-budget settings.
 > * **Mathematical Formulation:** The standard clipped surrogate is
 >
-> $$L_{\text{PPO}}(\theta)=\hat{\mathbb{E}}\left[\min\left(r_t(\theta)\hat A_t,\operatorname{clip}(r_t(\theta),1-\epsilon,1+\epsilon)\hat A_t\right)\right],\quad r_t(\theta)=\frac{\pi_\theta(a_t\mid s_t)}{\pi_{\theta_{\text{old}}}(a_t\mid s_t)}$$
+> $$L_{\text{PPO}}(\theta)=\hat{\mathbb{E}}\left[\min\left(r_t(\theta)\hat A_t,\mathrm{clip}(r_t(\theta),1-\epsilon,1+\epsilon)\hat A_t\right)\right],\quad r_t(\theta)=\frac{\pi_\theta(a_t\mid s_t)}{\pi_{\theta_{\text{old}}}(a_t\mid s_t)}$$
 >
 > * **Policy Update:** In RLHF, one typically optimizes
 >
@@ -77,7 +77,7 @@ A structured and project-oriented reading list for preference optimization and R
 >
 > with
 >
-> $$\mathcal L_{\text{OR}}=-\log\sigma\left(\log\frac{\operatorname{odds}_\theta(y_w\mid x)}{\operatorname{odds}_\theta(y_l\mid x)}\right),\quad \operatorname{odds}_\theta(y\mid x)=\frac{\pi_\theta(y\mid x)}{1-\pi_\theta(y\mid x)}$$
+> $$\mathcal L_{\text{OR}}=-\log\sigma\left(\log\frac{\mathrm{odds}_\theta(y_w\mid x)}{\mathrm{odds}_\theta(y_l\mid x)}\right),\quad \mathrm{odds}_\theta(y\mid x)=\frac{\pi_\theta(y\mid x)}{1-\pi_\theta(y\mid x)}$$
 >
 > * **Policy Update:** Each step jointly preserves next-token imitation on the chosen response and increases the chosen-vs-rejected odds ratio.
 
@@ -217,11 +217,11 @@ A structured and project-oriented reading list for preference optimization and R
 > * **Engineering Traits:** Essential for the project. GRPO is the core RLVR reference, but on SLMs it is prone to feedback-resolution and update-instability pathologies that the project is designed to measure.
 > * **Mathematical Formulation:** For a prompt $x_i$ with group rewards $r_{i,1},\dots,r_{i,G}$,
 >
-> $$\hat A_{i,j}=\frac{r_{i,j}-\operatorname{mean}(r_i)}{\operatorname{std}(r_i)+\epsilon}$$
+> $$\hat A_{i,j}=\frac{r_{i,j}-\mathrm{mean}(r_i)}{\mathrm{std}(r_i)+\epsilon}$$
 >
 > and the clipped policy objective is
 >
-> $$L_{\text{GRPO}}(\theta)=\hat{\mathbb E}_{i,j,t}\left[\min\left(\rho_{i,j,t}(\theta)\hat A_{i,j},\operatorname{clip}(\rho_{i,j,t}(\theta),1-\epsilon,1+\epsilon)\hat A_{i,j}\right)\right]$$
+> $$L_{\text{GRPO}}(\theta)=\hat{\mathbb E}_{i,j,t}\left[\min\left(\rho_{i,j,t}(\theta)\hat A_{i,j},\mathrm{clip}(\rho_{i,j,t}(\theta),1-\epsilon,1+\epsilon)\hat A_{i,j}\right)\right]$$
 >
 > where $\rho_{i,j,t}(\theta)=\pi_\theta(o_{i,j,t}\mid x_i,o_{i,j,<t})/\pi_{\theta_{\text{old}}}(o_{i,j,t}\mid x_i,o_{i,j,<t})$.
 > * **Policy Update:** Update by gradient ascent on $L_{\text{GRPO}}-\beta D_{\mathrm{KL}}(\pi_\theta\|\pi_{\text{ref}})$.
@@ -257,7 +257,7 @@ A structured and project-oriented reading list for preference optimization and R
 >
 > and optimize
 >
-> $$L_{\text{GSPO}}(\theta)=\hat{\mathbb E}_i\left[\min\left(\rho_i^{\text{seq}}\hat A_i,\operatorname{clip}(\rho_i^{\text{seq}},1-\epsilon,1+\epsilon)\hat A_i\right)\right]$$
+> $$L_{\text{GSPO}}(\theta)=\hat{\mathbb E}_i\left[\min\left(\rho_i^{\text{seq}}\hat A_i,\mathrm{clip}(\rho_i^{\text{seq}},1-\epsilon,1+\epsilon)\hat A_i\right)\right]$$
 >
 > * **Policy Update:** All tokens in a sequence share one clipped importance ratio, which reduces variance but coarsens token-level credit assignment.
 
@@ -272,7 +272,7 @@ A structured and project-oriented reading list for preference optimization and R
 > * **Engineering Traits:** Directly relevant to the project's Dimension 2 because it targets update geometry rather than only reward design.
 > * **Mathematical Formulation:** BandPO replaces the fixed clip region with adaptive bounds $[\ell_t,u_t]$ depending on action probability and trust-region geometry:
 >
-> $$L_{\text{BandPO}}(\theta)=\hat{\mathbb E}_t\left[\min\left(r_t(\theta)\hat A_t,\operatorname{clip}_{[\ell_t,u_t]}\big(r_t(\theta)\big)\hat A_t\right)\right]$$
+> $$L_{\text{BandPO}}(\theta)=\hat{\mathbb E}_t\left[\min\left(r_t(\theta)\hat A_t,\mathrm{clip}_{[\ell_t,u_t]}(r_t(\theta))\hat A_t\right)\right]$$
 >
 > * **Policy Update:** The policy is updated with larger freedom on informative low-probability actions and tighter constraints on unstable high-ratio updates.
 
@@ -319,7 +319,7 @@ A structured and project-oriented reading list for preference optimization and R
 > * **Engineering Traits:** Very relevant to realistic SLM settings where rollout budgets are small and baseline noise strongly affects update direction.
 > * **Mathematical Formulation:** The robust advantage estimate is
 >
-> $$\hat A_i=\frac{r_i-\operatorname{median}(r_1,\dots,r_{G+1})}{\operatorname{MAD}(r)+\epsilon}$$
+> $$\hat A_i=\frac{r_i-\mathrm{median}(r_1,\dots,r_{G+1})}{\mathrm{MAD}(r)+\epsilon}$$
 >
 > * **Policy Update:** The resulting advantage is then used inside the standard clipped GRPO policy objective, reducing sign flips induced by noisy group means.
 
@@ -350,7 +350,7 @@ A structured and project-oriented reading list for preference optimization and R
 > * **Engineering Traits:** Extremely important for the project's Dimension 3 because it directly diagnoses gradient misassignment in GRPO-like methods and reports strong 1.5B results.
 > * **Mathematical Formulation:** REAL replaces scalar-weighted policy gradients with a label-based classification loss, e.g.
 >
-> $$\mathcal L_{\text{REAL}}=\operatorname{BCE}\big(h_\theta(x,y),\,\mathbf 1[r(x,y)>0]\big)$$
+> $$\mathcal L_{\text{REAL}}=\mathrm{BCE}(h_\theta(x,y),\,\mathbf 1[r(x,y)>0])$$
 >
 > optionally with anchor logits for calibration.
 > * **Policy Update:** Correct rollouts and incorrect rollouts receive bounded, monotone classification gradients instead of unstable reward-proportional weights.
@@ -492,7 +492,7 @@ A structured and project-oriented reading list for preference optimization and R
 > * **Engineering Traits:** More infrastructure-driven than mainline SLM alignment, but highly useful for scaling discussions and asynchronous training caveats.
 > * **Mathematical Formulation:** VCPO rescales the policy update with ESS-aware step control:
 >
-> $$\eta_{\text{eff}}=\eta\cdot g\big(\operatorname{ESS}(w)\big),\quad \operatorname{ESS}(w)=\frac{(\sum_i w_i)^2}{\sum_i w_i^2}$$
+> $$\eta_{\text{eff}}=\eta\cdot g(\mathrm{ESS}(w)),\quad \mathrm{ESS}(w)=\frac{(\sum_i w_i)^2}{\sum_i w_i^2}$$
 >
 > and combines it with a minimum-variance off-policy baseline.
 > * **Policy Update:** When stale rollouts cause ESS collapse, the learning rate is automatically damped to avoid unstable updates.
