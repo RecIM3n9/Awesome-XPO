@@ -659,4 +659,4 @@ A structured and project-oriented reading list for preference optimization and R
 
 ---
 
-**⏳ To be continued... (This repository is continuously updated to serve the SLM GITA project.)**
+**⏳ To be continued...**
