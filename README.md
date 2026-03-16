@@ -513,6 +513,67 @@ A structured and project-oriented reading list for preference optimization and R
 > where $\lambda_t$ is adaptively gated and decays as the policy becomes competent.
 > * **Policy Update:** Failed trajectories receive temporary teacher-guided correction, but the anchoring term anneals away to recover asymptotically on-policy learning.
 
+#### 31. [Rethinking the Trust Region in LLM Reinforcement Learning](https://arxiv.org/abs/2602.04879) 
+* **Algorithm:** DPPO 
+* **Venue/Year:** arXiv 2026 
+* **Reference Code:** [sail-sg/Stable-RL](https://github.com/sail-sg/Stable-RL) 
+* **Local PDF:** [Qi et al. - 2026 - Rethinking the Trust Region in LLM Reinforcement Learning.pdf](<papers/Qi et al. - 2026 - Rethinking the Trust Region in LLM Reinforcement Learning.pdf>) 
+* **Rating:** `7.7/10`
+* > **Description:**
+> * **Core Intuition:** Standard PPO ratio clipping is ill-suited for the expansive vocabularies of LLMs because it over-penalizes low-probability tokens and under-penalizes high-probability ones. DPPO addresses this by substituting the heuristic single-sample ratio clipping with a dynamic mask based on a direct estimation of policy divergence. By utilizing highly efficient Binary and Top-K divergence approximations to minimize memory overhead, it guarantees that updates remain within a theoretically grounded trust region, thereby significantly improving both training stability and efficiency.
+> * **Mathematical Formulation:** 
+> 
+> $$L_{\mu}^{DPPO}(\pi) = \mathbb{E}_{y \sim \mu} \left[ \sum_{t=1}^{|y|} M_{t}^{DPPO} \cdot \frac{\pi(y_t|s_t)}{\mu(y_t|s_t)} \cdot \hat{A}_t \right]$$
+
+#### 32. [VESPO: Variational Sequence-Level Soft Policy Optimization for Stable Off-Policy LLM Training](https://arxiv.org/abs/2602.10693) 
+* **Algorithm:** VESPO 
+* **Venue/Year:** arXiv 2026 
+* **Reference Code:** [FloyedShen/VESPO](https://github.com/FloyedShen/VESPO) 
+* **Local PDF:** [Shen et al. - 2026 - VESPO - Variational Sequence-Level Soft Policy Optimization for Stable Off-Policy LLM Training.pdf](<papers/Shen et al. - 2026 - VESPO - Variational Sequence-Level Soft Policy Optimization for Stable Off-Policy LLM Training.pdf>) 
+* **Rating:** `8.1/10`
+> Description:
+> * Core Intuition: Designed to stabilize off-policy reinforcement learning against severe policy staleness and train-inference mismatches. Rather than relying on heuristic token-level clipping or biased length normalization, it derives a closed-form reshaping kernel from a variational formulation. This kernel operates directly on sequence-level importance weights to smoothly suppress extreme values without memory overhead, enabling highly stable training on small to large models even under fully asynchronous execution and high staleness ratios.
+> * Mathematical Formulation:
+> 
+> $$\nabla\mathcal{J}_{VESPO}=\mathbb{E}_{\tau\sim\mu}[W^{c_1}\exp(c_2(1-W))\cdot A(\tau)\cdot\nabla_\theta\log\pi_\theta(\tau)]$$
+
+#### 33. [Token-Importance Guided Direct Preference Optimization](https://arxiv.org/abs/2505.19653) 
+* **Algorithm:** TI-DPO 
+* **Venue/Year:** ICLR 2026 
+* **Reference Code:** [gracefulning/TIDPO](https://github.com/gracefulning/TIDPO) 
+* **Local PDF:** [Yang et al. - 2026 - Token-Importance Guided Direct Preference Optimization.pdf](<papers/Yang et al. - 2026 - Token-Importance Guided Direct Preference Optimization.pdf>) 
+* **Rating:** `7.5/10`
+> **Description:**
+> * **Core Intuition:** Addresses the sequence-level limitations of standard DPO by explicitly modeling token-level importance. It computes a hybrid token weight using gradient attribution and a Gaussian prior to robustly identify critical tokens while mitigating the architectural "Lost-in-the-Middle" bias of LLMs. Furthermore, it integrates a triplet loss to structurally guide the model's intermediate outputs toward preferred responses and away from non-preferred ones, enabling fine-grained semantic alignment at the cost of one additional backward pass per sequence during training.
+> * **Mathematical Formulation:**
+> 
+> $$\mathcal{L}_{TI-DPO} = \mathcal{L}_{DPO-w} + \gamma\mathcal{L}_{triplet}$$
+
+
+#### 34. [STAPO: Stabilizing Reinforcement Learning for LLMs by Silencing Rare Spurious Tokens](https://arxiv.org/abs/2602.15620)
+* **Algorithm:** STAPO 
+* **Venue/Year:** arXiv 2026 
+* **Reference Code:** N/A
+* **Local PDF:** [Liu et al. - 2026 - STAPO - Stabilizing Reinforcement Learning for LLMs by Silencing Rare Spurious Tokens.pdf.pdf](<papers/Liu et al. - 2026 - STAPO - Stabilizing Reinforcement Learning for LLMs by Silencing Rare Spurious Tokens.pdf.pdf>)
+* **Rating:** `8.0/10`
+> **Description:**
+> * **Core Intuition:** RL fine-tuning frequently suffers from instability caused by a tiny fraction (around 0.01%) of "spurious tokens" that contribute little to reasoning correctness but inherit full sequence-level rewards, triggering abnormally amplified gradient updates. STAPO efficiently identifies these tokens (via low probability, low entropy, and positive advantage signals) and masks them to suppress gradient perturbations, proving highly robust and effective for stabilizing RL across various scales, including smaller 1.7B models.
+> * **Mathematical Formulation:**
+> 
+> $$\mathcal{J}_{STAPO}(\theta) = \mathbb{E}_{x \sim \mathcal{D}, \{y_i\}_{i=1}^G \sim \pi_{\theta_{old}}} \left[ \frac{1}{G} \sum_{i=1}^G \frac{1}{\sum_{t=1}^{|y_i|} \mathbb{I}_{i,t}^{S2T}} \sum_{t=1}^{|y_i|} \mathbb{I}_{i,t}^{S2T} \min \left( \rho_{i,t}(\theta) \hat{A}_i, \text{clip}(\rho_{i,t}(\theta), 1-\epsilon_{low}, 1+\epsilon_{high}) \hat{A}_i \right) \right]$$
+
+#### 35. [CLIPO: Contrastive Learning in Policy Optimization Generalizes RLVR](https://arxiv.org/abs/2603.10101)
+* **Algorithm:** CLIPO 
+* **Venue/Year:** arXiv 2026 
+* **Reference Code:** [Qwen-Applications/CLIPO](https://github.com/Qwen-Applications/CLIPO) 
+* **Local PDF:** [Cui et al. - 2026 - CLIPO - Contrastive Learning in Policy Optimization Generalizes RLVR.pdf](<papers/Cui et al. - 2026 - CLIPO - Contrastive Learning in Policy Optimization Generalizes RLVR.pdf>)
+* **Rating:** `8.2/10`
+> **Description:**
+> * **Core Intuition:** Designed to improve reasoning generalization by addressing the sparse, outcome-only nature of standard RLVR. It introduces a lightweight contrastive head to maximize semantic similarity among successful reasoning trajectories within a rollout group while distancing them from erroneous ones. This acts as a denoising mechanism that distills invariant logical structures into a dense auxiliary reward, effectively mitigating hallucinations and step-level inconsistencies without requiring expensive process-level annotations. It performs exceptionally well on 3B to 8B parameter models.
+> * **Mathematical Formulation:**
+> 
+> $$\max_{\pi_{\theta}} \mathbb{E}[r(x,y)] + \lambda \cdot I(y;\overline{y}|x,\mathcal{P}_{y,\overline{y}})$$
+
 ---
 
 ## 🌟 Useful Resources (Surveys & Codebases)
