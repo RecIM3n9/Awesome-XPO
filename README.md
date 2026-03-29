@@ -574,6 +574,54 @@ A structured and project-oriented reading list for preference optimization and R
 > 
 > $$\max_{\pi_{\theta}} \mathbb{E}[r(x,y)] + \lambda \cdot I(y;\overline{y}|x,\mathcal{P}_{y,\overline{y}})$$
 
+#### 36. [DPO Meets PPO: Reinforced Token Optimization for RLHF](https://arxiv.org/abs/2404.18922)  
+* **Algorithm:** RTO (Reinforced Token Optimization) 
+* **Venue/Year:** arXiv 2024 
+* **Reference Code:** [zkshan2002/RTO](https://github.com/zkshan2002/RTO)  
+* **Local PDF:** [DPO Meets PPO - Reinforced Token Optimization for RLHF](<papers/Zhong et al. - 2024 - DPO Meets PPO - Reinforced Token Optimization for RLHF.pdf>)
+* **Rating:** 7.8/10
+> **Description:**
+> * **Core Intuition:** Standard PPO for RLHF struggles with sample inefficiency due to sparse, sentence-level rewards. RTO mitigates this by modeling RLHF as a token-wise Markov Decision Process (MDP). It extracts dense, token-level reward signals from an implicitly learned Direct Preference Optimization (DPO) model and uses them for fine-grained reward shaping. This allows PPO to perform step-by-step optimization, drastically improving sample efficiency while maintaining the robustness of RL training. 
+> * **Mathematical Formulation:**
+> 
+> $$r_{rto}(x,y_{1:h})=\begin{cases}\beta_{1}\log\frac{\pi_{dpo}(y_{h}|x,y_{1:h-1})}{\pi_{ref}(y_{h}|x,y_{1:h-1})}-\beta_{2}\log\frac{\pi(y_{h}|x,y_{1:h-1})}{\pi_{ref}(y_{h}|x,y_{1:h-1})}&h\le H-1\\\beta_{1}\log\frac{\pi_{dpo}(y_{h}|x,y_{1:h-1})}{\pi_{ref}(y_{h}|x,y_{1:h-1})}-\beta_{2}\log\frac{\pi(y_{h}|x,y_{1:h-1})}{\pi_{ref}(y_{h}|x,y_{1:h-1})}+\beta_{3}r_{MLE}(x,y_{1:H})&h=H\end{cases}$$ 
+
+#### 37. [DISPO: Enhancing Training Efficiency and Stability in Reinforcement Learning for Large Language Model Mathematical Reasoning](https://arxiv.org/abs/2602.00983)  
+* **Algorithm:** DISPO  
+* **Venue/Year:** AISTATS 2026 / arXiv 2026  
+* Reference Code: N/A 
+* **Local PDF:** [DISPO - Enhancing Training Efficiency and Stability in Reinforcement Learning for Large Language Model Mathematical Reasoning](<papers/Karaman et al. - 2026 - DISPO - Enhancing Training Efficiency and Stability in Reinforcement Learning for Large Language Model Mathematical Reasoning.pdf>) 
+* **Rating:** 8.3/10 
+> **Description:**
+> * **Core Intuition:** Addresses the clear trade-off between stable but slow PPO-style methods and efficient but highly unstable REINFORCE-style methods.  It achieves this by decoupling the clipping of importance sampling (IS) weights into four distinct regimes based on the advantage sign (correct vs. incorrect responses) and IS magnitude.  By tuning these regimes independently, DISPO maintains an optimal balance between exploration and distillation while preventing catastrophic failures like repetitive outputs or vanishing response lengths. 
+> * **Mathematical Formulation:**
+> 
+> $$J_{\text{DISPO}}(\theta) = \mathbb{E}_{(q,a)\sim\mathcal{D}, \{o_i\}_{i=1}^G \sim \pi_{\text{ref}}(\cdot|q)} \left[ \frac{1}{\sum_{i=1}^G |o_i|} \sum_{i=1}^G \sum_{t=1}^{|o_i|} \text{sg}(r_{i,t}^d(\theta)) \hat{A}_{i,t} \log \pi_\theta(o_{i,t} | q, o_{i,<t}) \right]$$ 
+
+#### 38. [Segment Policy Optimization: Effective Segment-Level Credit Assignment in RL for Large Language Models](https://arxiv.org/abs/2505.23564)
+* **Algorithm:** SPO (SPO-chain & SPO-tree)
+* **Venue/Year:** NeurIPS 2025 
+* **Reference Code:** [AIFrameResearch/SPO](https://github.com/AIFrameResearch/SPO) 
+* **Local PDF:** [Segment Policy Optimization - Effective Segment-Level Credit Assignment in RL for Large Language Models](<papers/Guo et al. - 2025 - Segment Policy Optimization - Effective Segment-Level Credit Assignment in RL for Large Language Models.pdf>)
+* **Rating:** 8.2/10
+> **Description:**
+> * **Core Intuition:** Designed to solve the credit assignment problem in LLM reasoning by operating at an intermediate segment granularity. It bridges the gap between inaccurate token-level advantage estimation (which requires training an unstable critic model) and imprecise trajectory-level estimation (like standard GRPO). By partitioning sequences into segments, estimating segment values via Monte Carlo sampling, and applying these advantages exclusively to low-confidence "cutpoint" tokens using a probability mask, it achieves high sample efficiency and highly precise credit assignment on small and medium models without the overhead of a critic.
+> * **Mathematical Formulation:**
+> 
+> $$\mathcal{J}_{SPO}(\theta) = \mathbb{E} \left\{ \frac{1}{Z} \sum_{k=1}^{K} \sum_{t=t_k}^{t_{k+1}-1} \left[ M_t \cdot \min(r_t(\theta)\hat{A}_k^{seg}, \text{clip}(r_t(\theta), 1-\epsilon, 1+\epsilon)\hat{A}_k^{seg}) - \beta D_{KL}(\pi_\theta || \pi_{ref}) \right] \right\}$$ 
+
+#### 39. [AAPO: Enhancing the Reasoning Capabilities of LLMs with Advantage Momentum](https://arxiv.org/abs/2505.14264) 
+* **Algorithm:** AAPO 
+* **Venue/Year:** arXiv 2025 
+* **Reference Code:** N/A 
+* **Local PDF:** [AAPO - Enhancing the Reasoning Capabilities of LLMs with Advantage Momentum](<papers/Xiong et al. - 2025 - AAPO - Enhancing the Reasoning Capabilities of LLMs with Advantage Momentum.pdf>) 
+* **Rating:** 8.0/10 
+> **Description:**
+> * **Core Intuition:** Addresses training inefficiencies—such as zero gradients—in group relative advantage estimation methods (like GRPO) that occur when within-group rewards exhibit low variance (e.g., when all sampled responses are similarly good or bad). It resolves this by introducing an "advantage momentum" term, which compares the rewards of the current policy model's responses against those from a frozen reference model. This effectively provides a reliable optimization signal that prevents the advantage from dropping to zero, ensuring stable and continuous learning even in late-stage RL, proving highly efficient for small language models (like 1.5B, 3B, and 7B architectures).
+> * **Mathematical Formulation:**
+> 
+> $$\hat{A}_{i,t}^{*} = \frac{r_{\theta_i} - \text{mean}(r_\theta)}{\text{std}(r_\theta)} + \text{clip}(r_{\theta_i} - r_{ref_i}, \delta_{low}, \delta_{high})$$ 
+
 ---
 
 ## 🌟 Useful Resources (Surveys & Codebases)
