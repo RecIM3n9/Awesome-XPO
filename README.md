@@ -622,6 +622,142 @@ A structured and project-oriented reading list for preference optimization and R
 > 
 > $$\hat{A}_{i,t}^{*} = \frac{r_{\theta_i} - \text{mean}(r_\theta)}{\text{std}(r_\theta)} + \text{clip}(r_{\theta_i} - r_{ref_i}, \delta_{low}, \delta_{high})$$ 
 
+#### 40. [SortedRL: Accelerating RL Training for LLMs through Online Length-Aware Scheduling](https://arxiv.org/abs/2603.23414)
+
+  * **Algorithm:** SortedRL
+  * **Venue/Year:** arXiv 2026
+  * **Reference Code:** N/A
+  * **Local PDF:** [Zhang et al. - 2026 - SortedRL - Accelerating RL Training for LLMs through Online Length-Aware Scheduling.pdf](<papers/Zhang et al. - 2026 - SortedRL - Accelerating RL Training for LLMs through Online Length-Aware Scheduling.pdf>)
+  * **Rating:** `7.5/10`
+> **Description:**
+>
+>   * **Core Intuition:** SortedRL attacks the systems bottleneck of reasoning RL rather than replacing the base policy objective. It sorts rollout samples online by generated length so short responses can be grouped and consumed first, which lets updates start earlier, shrinks rollout-update bubbles, and creates a near on-policy micro-curriculum. This is a practical fit for small-model policy optimization when wall-clock budget is tight.
+>
+>   * **Mathematical Formulation:** The policy loss stays in the GRPO/DAPO family, while the data pipeline is changed by a length-aware schedule that sorts responses by output length and forms early update groups from the shortest rollouts first:
+>
+> $$\sigma = \operatorname{argsort}_i \, |o_i|$$
+>
+>   * With bounded cache reuse, SortedRL also controls how much stale off-policy data is admitted during asynchronous rollout-update overlap.
+
+#### 41. [Exploratory Memory-Augmented LLM Agent via Hybrid On- and Off-Policy Optimization](https://arxiv.org/abs/2602.23008)
+
+  * **Algorithm:** EMPO2 (Exploratory Memory-Augmented On- and Off-Policy Optimization)
+  * **Venue/Year:** ICLR 2026
+  * **Reference Code:** [microsoft/agent-lightning](https://github.com/microsoft/agent-lightning/tree/main/contrib/recipes/envs)
+  * **Local PDF:** [Liu et al. - 2026 - Exploratory Memory-Augmented LLM Agent via Hybrid On- and Off-Policy Optimization.pdf](<papers/Liu et al. - 2026 - Exploratory Memory-Augmented LLM Agent via Hybrid On- and Off-Policy Optimization.pdf>)
+  * **Rating:** `6.7/10`
+> **Description:**
+>
+>   * **Core Intuition:** EMPO2 focuses on exploration-heavy agent environments, where pretrained priors are not enough. It adds a self-generated memory buffer of reflective tips and combines on-policy improvement with off-policy consolidation so the agent can benefit from memory during exploration but still remain robust when memory is absent. The match to small-model policy optimization is moderate because it is more agent-centric than pure reasoning RLVR.
+>
+>   * **Mathematical Formulation:** EMPO2 optimizes a hybrid on/off-policy objective over standard trajectories and memory-augmented replay:
+>
+> $$\mathcal{J}_{\mathrm{EMPO2}}(\theta) = \mathcal{J}_{\mathrm{on}}(\theta;\tau \sim \pi_{\theta_{\mathrm{old}}}) + \lambda \mathcal{J}_{\mathrm{off}}(\theta;\tau \sim \mathcal{B}_{\mathcal{M}})$$
+>
+>   * Here $\mathcal{B}_{\mathcal{M}}$ stores memory-augmented experience, and the off-policy branch transfers exploratory discoveries back into the policy.
+
+#### 42. [MHPO: Modulated Hazard-aware Policy Optimization for Stable Reinforcement Learning](https://arxiv.org/abs/2603.16929)
+
+  * **Algorithm:** MHPO
+  * **Venue/Year:** arXiv 2026
+  * **Reference Code:** N/A
+  * **Local PDF:** [Wang et al. - 2026 - MHPO - Modulated Hazard-aware Policy Optimization for Stable Reinforcement Learning.pdf](<papers/Wang et al. - 2026 - MHPO - Modulated Hazard-aware Policy Optimization for Stable Reinforcement Learning.pdf>)
+  * **Rating:** `8.0/10`
+> **Description:**
+>
+>   * **Core Intuition:** MHPO is a stability-oriented xPO variant for GRPO-style training. Instead of hard clipping importance ratios, it maps them into a bounded differentiable domain with a Log-Fidelity Modulator and then adds asymmetric hazard penalties to separately control over-expansion and over-contraction. This makes it broadly relevant for small-model policy optimization, where noisy updates can destabilize training quickly.
+>
+>   * **Mathematical Formulation:** The method replaces raw ratio control with a modulated ratio and hazard-aware regularization:
+>
+> $$\tilde{\rho}_{i,t} = \tanh(\alpha \log \rho_{i,t}), \qquad \mathcal{L}_{\mathrm{MHPO}} = -\tilde{\rho}_{i,t}\hat{A}_{i,t} + \lambda_+ H_+(\rho_{i,t}) + \lambda_- H_-(\rho_{i,t})$$
+>
+>   * The hazard terms shape a smoother trust-region-like landscape than hard clipping and explicitly suppress extreme policy shifts.
+
+#### 43. [LongRLVR: Long-Context Reinforcement Learning Requires Verifiable Context Rewards](https://arxiv.org/abs/2603.02146)
+
+  * **Algorithm:** LongRLVR
+  * **Venue/Year:** ICLR 2026
+  * **Reference Code:** [real-absolute-AI/LongRLVR](https://github.com/real-absolute-AI/LongRLVR)
+  * **Local PDF:** [Chen et al. - 2026 - LongRLVR - Long-Context Reinforcement Learning Requires Verifiable Context Rewards.pdf](<papers/Chen et al. - 2026 - LongRLVR - Long-Context Reinforcement Learning Requires Verifiable Context Rewards.pdf>)
+  * **Rating:** `7.8/10`
+> **Description:**
+>
+>   * **Core Intuition:** LongRLVR shows that answer-only RLVR breaks in long-context settings because the grounding step gets almost no usable gradient. Its fix is to explicitly reward context selection: the policy first identifies support chunks, then receives a dense and verifiable context reward before answer generation. This is especially relevant when small models must reason over retrieved or externally provided long contexts.
+>
+>   * **Mathematical Formulation:** The paper makes the reward decomposition explicit by augmenting answer reward with a verifiable context reward:
+>
+> $$r_{\mathrm{total}}(y, Z) = r_{\mathrm{ans}}(y) + r_{\mathrm{ctx}}(Z, G), \qquad \mathcal{J}(\theta) = \mathbb{E}_{(X,Q,G)} \, \mathbb{E}_{(Z,y)\sim \pi_\theta} \left[r_{\mathrm{ans}}(y) + r_{\mathrm{ctx}}(Z,G)\right]$$
+>
+>   * In practice, $r_{\mathrm{ctx}}$ is instantiated with an $F_\beta$-style grounding score over the selected chunk identifiers.
+
+#### 44. [FIPO: Eliciting Deep Reasoning with Future-KL Influenced Policy Optimization](https://arxiv.org/abs/2603.19835)
+
+  * **Algorithm:** FIPO
+  * **Venue/Year:** arXiv 2026
+  * **Reference Code:** [qwenpilot/FIPO](https://github.com/qwenpilot/FIPO)
+  * **Local PDF:** [Ma et al. - 2026 - FIPO - Eliciting Deep Reasoning with Future-KL Influenced Policy Optimization.pdf](<papers/Ma et al. - 2026 - FIPO - Eliciting Deep Reasoning with Future-KL Influenced Policy Optimization.pdf>)
+  * **Rating:** `8.7/10`
+> **Description:**
+>
+>   * **Core Intuition:** FIPO targets the coarse credit assignment of GRPO-style RL, where one sequence-level advantage is broadcast across all tokens. It injects discounted future-KL influence into the token update so present tokens are weighted by how much they affect subsequent trajectory behavior. For small-model policy optimization on long reasoning tasks, this is one of the most directly relevant recent ideas.
+>
+>   * **Mathematical Formulation:** FIPO replaces the standard token advantage with a dense future-aware term that aggregates discounted future-KL influence:
+>
+> $$\hat{A}^{\mathrm{FIPO}}_t = \hat{A}_t + \lambda \sum_{k=t+1}^{T} \gamma^{k-t} \,\mathrm{FutureKL}_k$$
+>
+>   * The resulting $\hat{A}^{\mathrm{FIPO}}_t$ is then inserted into a clipped GRPO/DAPO-style surrogate objective together with influence clipping and filtering for stability.
+
+#### 45. [ERPO: Token-Level Entropy-Regulated Policy Optimization for Large Reasoning Models](https://arxiv.org/abs/2603.28204)
+
+  * **Algorithm:** ERPO
+  * **Venue/Year:** arXiv 2026
+  * **Reference Code:** N/A
+  * **Local PDF:** [Yu et al. - 2026 - ERPO - Token-Level Entropy-Regulated Policy Optimization for Large Reasoning Models.pdf](<papers/Yu et al. - 2026 - ERPO - Token-Level Entropy-Regulated Policy Optimization for Large Reasoning Models.pdf>)
+  * **Rating:** `8.3/10`
+> **Description:**
+>
+>   * **Core Intuition:** ERPO argues that uniform sequence-level advantages prematurely collapse entropy at critical decision pivots in reasoning traces. It therefore shifts optimization to fine-grained token dynamics by detecting high-entropy decision points, amplifying exploration there, normalizing token signals by progress buckets, and re-synthesizing advantages with outcome anchors. This fine-grained credit assignment is highly relevant to small reasoning models.
+>
+>   * **Mathematical Formulation:** ERPO defines entropy-aware gating and result-anchored token synthesis to construct its final token-level update signal:
+>
+> $$W_{i,t} = \sigma\!\left(\gamma \,\mathrm{Norm}_G(H_{i,t})\right), \qquad \Psi_{i,t} = W_{i,t}\,\mathrm{sgn}\!\left(\hat{A}^{\mathrm{group}}_i\right)\tilde{s}_{i,t}$$
+>
+>   * These token-level quantities are then normalized and assembled into the final ERPO advantage used for policy optimization.
+
+#### 46. [HDPO: Hybrid Distillation Policy Optimization via Privileged Self-Distillation](https://arxiv.org/abs/2603.23871)
+
+  * **Algorithm:** HDPO
+  * **Venue/Year:** arXiv 2026
+  * **Reference Code:** N/A
+  * **Local PDF:** [Ding - 2026 - HDPO - Hybrid Distillation Policy Optimization via Privileged Self-Distillation.pdf](<papers/Ding - 2026 - HDPO - Hybrid Distillation Policy Optimization via Privileged Self-Distillation.pdf>)
+  * **Rating:** `9.4/10`
+> **Description:**
+>
+>   * **Core Intuition:** HDPO directly targets cliff prompts where ordinary RL has zero gradient because every rollout fails. It uses the same model as a privileged teacher by appending ground-truth information on failed prompts, filters correct privileged rollouts, and distills them back to the student with a mode-covering divergence. Because the empirical study is on Qwen2.5-Math-1.5B-Instruct, the paper is exceptionally well aligned with small-model policy optimization.
+>
+>   * **Mathematical Formulation:** HDPO augments the base RL objective with privileged self-distillation on cliff prompts:
+>
+> $$\mathcal{J}_{\mathrm{HDPO}}(\theta) = \mathcal{J}_{\mathrm{RL}}(\theta) + \lambda \,\mathrm{JSD}\!\left(\pi_\theta^{\mathrm{student}} \,\|\, \pi_\theta^{\mathrm{teacher,priv}}\right)$$
+>
+>   * The paper further proves that $R=1$ filtered privileged rollouts recover the KL-regularized optimal target distribution in the hard-threshold limit.
+
+#### 47. [Reaching Beyond the Mode: RL for Distributional Reasoning in Language Models](https://arxiv.org/abs/2603.24844)
+
+  * **Algorithm:** Multi-Answer RL
+  * **Venue/Year:** arXiv 2026
+  * **Reference Code:** [ishapuri/multi_answer_rl](https://github.com/ishapuri/multi_answer_rl)
+  * **Local PDF:** [Puri et al. - 2026 - Reaching Beyond the Mode - RL for Distributional Reasoning in Language Models.pdf](<papers/Puri et al. - 2026 - Reaching Beyond the Mode - RL for Distributional Reasoning in Language Models.pdf>)
+  * **Rating:** `7.4/10`
+> **Description:**
+>
+>   * **Core Intuition:** This paper argues that standard single-answer RL collapses the model onto one dominant mode even when tasks require multiple plausible answers. Its Multi-Answer RL objective instead trains the model to emit several candidate answers plus confidence estimates in a single forward pass, improving diversity, coverage, and calibration. The match to small-model policy optimization is good when multi-hypothesis reasoning matters, but it is less central for classic single-answer RLVR.
+>
+>   * **Mathematical Formulation:** The method optimizes a set-valued policy objective over a jointly generated answer set:
+>
+> $$\mathcal{J}_{\mathrm{MARL}}(\theta) = \mathbb{E}_{(x,Y)} \left[r_{\mathrm{set}}(Y)\right], \qquad Y = \{y_1,\dots,y_K\}$$
+>
+>   * Here $r_{\mathrm{set}}$ rewards distributional quality such as coverage, diversity, and calibration rather than only the top-mode answer.
+
 ---
 
 ## 🌟 Useful Resources (Surveys & Codebases)
