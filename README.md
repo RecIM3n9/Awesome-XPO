@@ -635,7 +635,7 @@ A structured and project-oriented reading list for preference optimization and R
 >
 >   * **Mathematical Formulation:** The policy loss stays in the GRPO/DAPO family, while the data pipeline is changed by a length-aware schedule that sorts responses by output length and forms early update groups from the shortest rollouts first:
 >
-> $$\sigma = \operatorname{argsort}_i \, |o_i|$$
+> $$\sigma = \text{argsort}_i \, |o_i|$$
 >
 >   * With bounded cache reuse, SortedRL also controls how much stale off-policy data is admitted during asynchronous rollout-update overlap.
 
