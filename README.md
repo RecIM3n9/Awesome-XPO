@@ -251,13 +251,13 @@ A structured and project-oriented reading list for preference optimization and R
 > **Description:**
 > * **Core Intuition:** Replaces GRPO's token-level importance ratio with a sequence-level ratio to better match sequence-level rewards.
 > * **Engineering Traits:** A key extension for the project because it changes credit-assignment granularity and may trade lower variance for coarser supervision.
-> * **Mathematical Formulation:** Define a sequence-level ratio
+> * **Mathematical Formulation:** Define the sequence-level ratio by
 >
-> $$\rho_i^{seq}(\theta)=\frac{\pi_\theta(y_i\mid x_i)}{\pi_{\theta_{old}}(y_i\mid x_i)}=\exp(\sum_t \log\frac{\pi_\theta(y_{i,t}\mid x_i,y_{i,<t})}{\pi_{\theta_{old}}(y_{i,t}\mid x_i,y_{i,<t})})$$
+> $$r_i^{seq}=\frac{\pi_\theta(y_i\mid x_i)}{\pi_{old}(y_i\mid x_i)}$$
 >
 > and optimize
 >
-> $$L_{GSPO}(\theta)=\hat{\mathbb E}_i[\min(\rho_i^{seq}\hat A_i,\mathrm{clip}(\rho_i^{seq},1-\epsilon,1+\epsilon)\hat A_i)]$$
+> $$L_{GSPO}=\hat{\mathbb E}_i[\min(r_i^{seq}\hat A_i,\mathrm{clip}(r_i^{seq},1-\epsilon,1+\epsilon)\hat A_i)]$$
 >
 > * **Policy Update:** All tokens in a sequence share one clipped importance ratio, which reduces variance but coarsens token-level credit assignment.
 
@@ -364,11 +364,11 @@ A structured and project-oriented reading list for preference optimization and R
 > **Description:**
 > * **Core Intuition:** Diagnoses and corrects response-length bias in sequence-level RLVR.
 > * **Engineering Traits:** Directly aligned with the project's planned pathology analysis around verbosity, reward coupling, and length collapse.
-> * **Mathematical Formulation:** LUSPO uses a length-unbiased sequence ratio, conceptually normalizing the log-ratio by sequence length:
+> * **Mathematical Formulation:** LUSPO uses a length-normalized sequence ratio:
 >
-> $$\rho_i^{LU}(\theta)=\exp(\frac{1}{|y_i|}\sum_t \log\frac{\pi_\theta(y_{i,t}\mid x_i,y_{i,<t})}{\pi_{\theta_{old}}(y_{i,t}\mid x_i,y_{i,<t})})$$
+> $$r_i^{LU}=\exp(\frac{1}{|y_i|}\sum_t \log\frac{\pi_\theta(y_{i,t}\mid x_i,y_{i,<t})}{\pi_{old}(y_{i,t}\mid x_i,y_{i,<t})})$$
 >
-> and then applies a clipped sequence-level objective using $\rho_i^{LU}$.
+> and then applies a clipped sequence-level objective using $r_i^{LU}$.
 > * **Policy Update:** This prevents long responses from receiving systematically inflated or deflated updates purely because of token count.
 
 #### 22. [Orchestrating Tokens and Sequences: Dynamic Hybrid Policy Optimization for RLVR](https://arxiv.org/abs/2601.05607)
@@ -396,9 +396,9 @@ A structured and project-oriented reading list for preference optimization and R
 > **Description:**
 > * **Core Intuition:** Uses sentence-level importance ratios to strike a middle ground between GRPO and GSPO.
 > * **Engineering Traits:** Especially relevant when studying whether finer-than-sequence but coarser-than-token credit improves SLM stability.
-> * **Mathematical Formulation:** Let $s$ index sentence spans inside a response. SSPO defines
+> * **Mathematical Formulation:** Let $s$ index sentence spans inside a response. SSPO defines the span-level ratio
 >
-> $$\rho_{i,s}(\theta)=\frac{\pi_\theta(y_{i,s}\mid x_i,y_{i,<s})}{\pi_{\theta_{old}}(y_{i,s}\mid x_i,y_{i,<s})}$$
+> $$r_{i,s}=\frac{\pi_\theta(y_{i,s}\mid x_i,y_{i,<s})}{\pi_{old}(y_{i,s}\mid x_i,y_{i,<s})}$$
 >
 > and applies PPO-style clipping at the sentence level.
 > * **Policy Update:** Entire responses are no longer clipped by one scalar, but the algorithm also avoids the highest variance of fully token-level credit assignment.
