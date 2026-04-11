@@ -366,7 +366,7 @@ A structured and project-oriented reading list for preference optimization and R
 > * **Engineering Traits:** Directly aligned with the project's planned pathology analysis around verbosity, reward coupling, and length collapse.
 > * **Mathematical Formulation:** LUSPO uses a length-normalized sequence ratio:
 >
-> $$r_i^{LU}=\exp(\frac{1}{|y_i|}\sum_t \log\frac{\pi_\theta(y_{i,t}\mid x_i,y_{i,<t})}{\pi_{old}(y_{i,t}\mid x_i,y_{i,<t})})$$
+> $$r_i^{LU}=\exp(\frac{1}{|y_i|}\sum_t \log\frac{\pi_\theta(y_{i,t}\mid x_i,h_{i,t})}{\pi_{old}(y_{i,t}\mid x_i,h_{i,t})})$$
 >
 > and then applies a clipped sequence-level objective using $r_i^{LU}$.
 > * **Policy Update:** This prevents long responses from receiving systematically inflated or deflated updates purely because of token count.
@@ -398,7 +398,7 @@ A structured and project-oriented reading list for preference optimization and R
 > * **Engineering Traits:** Especially relevant when studying whether finer-than-sequence but coarser-than-token credit improves SLM stability.
 > * **Mathematical Formulation:** Let $s$ index sentence spans inside a response. SSPO defines the span-level ratio
 >
-> $$r_{i,s}=\frac{\pi_\theta(y_{i,s}\mid x_i,y_{i,<s})}{\pi_{old}(y_{i,s}\mid x_i,y_{i,<s})}$$
+> $$r_{i,s}=\frac{\pi_\theta(y_{i,s}\mid x_i,h_{i,s})}{\pi_{old}(y_{i,s}\mid x_i,h_{i,s})}$$
 >
 > and applies PPO-style clipping at the sentence level.
 > * **Policy Update:** Entire responses are no longer clipped by one scalar, but the algorithm also avoids the highest variance of fully token-level credit assignment.
