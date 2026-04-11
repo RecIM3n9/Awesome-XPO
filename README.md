@@ -523,7 +523,7 @@ A structured and project-oriented reading list for preference optimization and R
 > * **Core Intuition:** Standard PPO ratio clipping is ill-suited for the expansive vocabularies of LLMs because it over-penalizes low-probability tokens and under-penalizes high-probability ones. DPPO addresses this by substituting the heuristic single-sample ratio clipping with a dynamic mask based on a direct estimation of policy divergence. By utilizing highly efficient Binary and Top-K divergence approximations to minimize memory overhead, it guarantees that updates remain within a theoretically grounded trust region, thereby significantly improving both training stability and efficiency.
 > * **Mathematical Formulation:** 
 > 
-> $$L_{\mu}^{DPPO}(\pi) = \mathbb{E}_{y \sim \mu} \left[ \sum_{t=1}^{|y|} M_{t}^{DPPO} \cdot \frac{\pi(y_t|s_t)}{\mu(y_t|s_t)} \cdot \hat{A}_t \right]$$
+> $$L_{\mu}^{DPPO}(\pi)=\mathbb{E}_{y\sim\mu}[\sum_{t=1}^{|y|} M_t^{DPPO}\cdot \frac{\pi(y_t\mid s_t)}{\mu(y_t\mid s_t)}\cdot \hat A_t]$$
 
 #### 32. [VESPO: Variational Sequence-Level Soft Policy Optimization for Stable Off-Policy LLM Training](https://arxiv.org/abs/2602.10693) 
 * **Algorithm:** VESPO 
@@ -560,7 +560,7 @@ A structured and project-oriented reading list for preference optimization and R
 > * **Core Intuition:** RL fine-tuning frequently suffers from instability caused by a tiny fraction (around 0.01%) of "spurious tokens" that contribute little to reasoning correctness but inherit full sequence-level rewards, triggering abnormally amplified gradient updates. STAPO efficiently identifies these tokens (via low probability, low entropy, and positive advantage signals) and masks them to suppress gradient perturbations, proving highly robust and effective for stabilizing RL across various scales, including smaller 1.7B models.
 > * **Mathematical Formulation:**
 > 
-> $$\mathcal{J}_{STAPO}(\theta) = \mathbb{E}_{x \sim \mathcal{D}, \{y_i\}_{i=1}^G \sim \pi_{\theta_{old}}} \left[ \frac{1}{G} \sum_{i=1}^G \frac{1}{\sum_{t=1}^{|y_i|} \mathbb{I}_{i,t}^{S2T}} \sum_{t=1}^{|y_i|} \mathbb{I}_{i,t}^{S2T} \min \left( \rho_{i,t}(\theta) \hat{A}_i, \text{clip}(\rho_{i,t}(\theta), 1-\epsilon_{low}, 1+\epsilon_{high}) \hat{A}_i \right) \right]$$
+> $$\mathcal J_{STAPO}(\theta)=\mathbb E_{x\sim\mathcal D,\{y_i\}_{i=1}^G\sim\pi_{\theta_{old}}}[\frac{1}{G}\sum_{i=1}^G \frac{1}{\sum_{t=1}^{|y_i|} I_{i,t}^{S2T}} \sum_{t=1}^{|y_i|} I_{i,t}^{S2T}\min(\rho_{i,t}(\theta)\hat A_i,\mathrm{clip}(\rho_{i,t}(\theta),1-\epsilon_{low},1+\epsilon_{high})\hat A_i)]$$
 
 #### 35. [CLIPO: Contrastive Learning in Policy Optimization Generalizes RLVR](https://arxiv.org/abs/2603.10101)
 * **Algorithm:** CLIPO 
@@ -596,7 +596,7 @@ A structured and project-oriented reading list for preference optimization and R
 > * **Core Intuition:** Addresses the clear trade-off between stable but slow PPO-style methods and efficient but highly unstable REINFORCE-style methods.  It achieves this by decoupling the clipping of importance sampling (IS) weights into four distinct regimes based on the advantage sign (correct vs. incorrect responses) and IS magnitude.  By tuning these regimes independently, DISPO maintains an optimal balance between exploration and distillation while preventing catastrophic failures like repetitive outputs or vanishing response lengths. 
 > * **Mathematical Formulation:**
 > 
-> $$J_{\text{DISPO}}(\theta) = \mathbb{E}_{(q,a)\sim\mathcal{D}, \{o_i\}_{i=1}^G \sim \pi_{\text{ref}}(\cdot|q)} \left[ \frac{1}{\sum_{i=1}^G |o_i|} \sum_{i=1}^G \sum_{t=1}^{|o_i|} \text{sg}(r_{i,t}^d(\theta)) \hat{A}_{i,t} \log \pi_\theta(o_{i,t} | q, o_{i,<t}) \right]$$ 
+> $$J_{DISPO}(\theta)=\mathbb E_{(q,a)\sim\mathcal D,\{o_i\}_{i=1}^G\sim\pi_{ref}(\cdot\mid q)}[\frac{1}{\sum_{i=1}^G |o_i|}\sum_{i=1}^G\sum_{t=1}^{|o_i|} \mathrm{sg}(r_{i,t}^d(\theta))\hat A_{i,t}\log\pi_\theta(o_{i,t}\mid q,o_{i,<t})]$$
 
 #### 38. [Segment Policy Optimization: Effective Segment-Level Credit Assignment in RL for Large Language Models](https://arxiv.org/abs/2505.23564)
 * **Algorithm:** SPO (SPO-chain & SPO-tree)
@@ -608,7 +608,7 @@ A structured and project-oriented reading list for preference optimization and R
 > * **Core Intuition:** Designed to solve the credit assignment problem in LLM reasoning by operating at an intermediate segment granularity. It bridges the gap between inaccurate token-level advantage estimation (which requires training an unstable critic model) and imprecise trajectory-level estimation (like standard GRPO). By partitioning sequences into segments, estimating segment values via Monte Carlo sampling, and applying these advantages exclusively to low-confidence "cutpoint" tokens using a probability mask, it achieves high sample efficiency and highly precise credit assignment on small and medium models without the overhead of a critic.
 > * **Mathematical Formulation:**
 > 
-> $$\mathcal{J}_{SPO}(\theta) = \mathbb{E} \left\{ \frac{1}{Z} \sum_{k=1}^{K} \sum_{t=t_k}^{t_{k+1}-1} \left[ M_t \cdot \min(r_t(\theta)\hat{A}_k^{seg}, \text{clip}(r_t(\theta), 1-\epsilon, 1+\epsilon)\hat{A}_k^{seg}) - \beta D_{KL}(\pi_\theta || \pi_{ref}) \right] \right\}$$ 
+> $$\mathcal J_{SPO}(\theta)=\mathbb E[\frac{1}{Z}\sum_{k=1}^{K}\sum_{t=t_k}^{t_{k+1}-1}(M_t\cdot \min(r_t(\theta)\hat A_k^{seg},\mathrm{clip}(r_t(\theta),1-\epsilon,1+\epsilon)\hat A_k^{seg})-\beta D_{KL}(\pi_\theta\|\pi_{ref}))]$$
 
 #### 39. [AAPO: Enhancing the Reasoning Capabilities of LLMs with Advantage Momentum](https://arxiv.org/abs/2505.14264) 
 * **Algorithm:** AAPO 
@@ -620,7 +620,7 @@ A structured and project-oriented reading list for preference optimization and R
 > * **Core Intuition:** Addresses training inefficiencies—such as zero gradients—in group relative advantage estimation methods (like GRPO) that occur when within-group rewards exhibit low variance (e.g., when all sampled responses are similarly good or bad). It resolves this by introducing an "advantage momentum" term, which compares the rewards of the current policy model's responses against those from a frozen reference model. This effectively provides a reliable optimization signal that prevents the advantage from dropping to zero, ensuring stable and continuous learning even in late-stage RL, proving highly efficient for small language models (like 1.5B, 3B, and 7B architectures).
 > * **Mathematical Formulation:**
 > 
-> $$\hat{A}_{i,t}^{*} = \frac{r_{\theta_i} - \text{mean}(r_\theta)}{\text{std}(r_\theta)} + \text{clip}(r_{\theta_i} - r_{ref_i}, \delta_{low}, \delta_{high})$$ 
+> $$\hat A_{i,t}^{*}=\frac{r_{\theta_i}-\mathrm{mean}(r_\theta)}{\mathrm{std}(r_\theta)}+\mathrm{clip}(r_{\theta_i}-r_{ref_i},\delta_{low},\delta_{high})$$
 
 #### 40. [SortedRL: Accelerating RL Training for LLMs through Online Length-Aware Scheduling](https://arxiv.org/abs/2603.23414)
 
@@ -635,7 +635,7 @@ A structured and project-oriented reading list for preference optimization and R
 >
 >   * **Mathematical Formulation:** The policy loss stays in the GRPO/DAPO family, while the data pipeline is changed by a length-aware schedule that sorts responses by output length and forms early update groups from the shortest rollouts first:
 >
-> $$\sigma = \text{argsort}_i \, |o_i|$$
+> $$\sigma=\mathrm{argsort}_i\,|o_i|$$
 >
 >   * With bounded cache reuse, SortedRL also controls how much stale off-policy data is admitted during asynchronous rollout-update overlap.
 
@@ -652,7 +652,7 @@ A structured and project-oriented reading list for preference optimization and R
 >
 >   * **Mathematical Formulation:** EMPO2 optimizes a hybrid on/off-policy objective over standard trajectories and memory-augmented replay:
 >
-> $$\mathcal{J}_{\mathrm{EMPO2}}(\theta) = \mathcal{J}_{\mathrm{on}}(\theta;\tau \sim \pi_{\theta_{\mathrm{old}}}) + \lambda \mathcal{J}_{\mathrm{off}}(\theta;\tau \sim \mathcal{B}_{\mathcal{M}})$$
+> $$\mathcal J_{EMPO2}(\theta)=\mathcal J_{on}(\theta;\tau\sim\pi_{\theta_{old}})+\lambda\mathcal J_{off}(\theta;\tau\sim\mathcal B_{\mathcal M})$$
 >
 >   * Here $\mathcal{B}_{\mathcal{M}}$ stores memory-augmented experience, and the off-policy branch transfers exploratory discoveries back into the policy.
 
@@ -669,7 +669,7 @@ A structured and project-oriented reading list for preference optimization and R
 >
 >   * **Mathematical Formulation:** The method replaces raw ratio control with a modulated ratio and hazard-aware regularization:
 >
-> $$\tilde{\rho}_{i,t} = \tanh(\alpha \log \rho_{i,t}), \qquad \mathcal{L}_{\mathrm{MHPO}} = -\tilde{\rho}_{i,t}\hat{A}_{i,t} + \lambda_+ H_+(\rho_{i,t}) + \lambda_- H_-(\rho_{i,t})$$
+> $$\tilde\rho_{i,t}=\tanh(\alpha\log\rho_{i,t}),\qquad \mathcal L_{MHPO}=-\tilde\rho_{i,t}\hat A_{i,t}+\lambda_+ H_+(\rho_{i,t})+\lambda_- H_-(\rho_{i,t})$$
 >
 >   * The hazard terms shape a smoother trust-region-like landscape than hard clipping and explicitly suppress extreme policy shifts.
 
@@ -686,9 +686,9 @@ A structured and project-oriented reading list for preference optimization and R
 >
 >   * **Mathematical Formulation:** The paper makes the reward decomposition explicit by augmenting answer reward with a verifiable context reward:
 >
-> $$r_{\mathrm{total}}(y, Z) = r_{\mathrm{ans}}(y) + r_{\mathrm{ctx}}(Z, G), \qquad \mathcal{J}(\theta) = \mathbb{E}_{(X,Q,G)} \, \mathbb{E}_{(Z,y)\sim \pi_\theta} \left[r_{\mathrm{ans}}(y) + r_{\mathrm{ctx}}(Z,G)\right]$$
+> $$r_{total}(y,Z)=r_{ans}(y)+r_{ctx}(Z,G),\qquad \mathcal J(\theta)=\mathbb E_{(X,Q,G)}\,\mathbb E_{(Z,y)\sim\pi_\theta}[r_{ans}(y)+r_{ctx}(Z,G)]$$
 >
->   * In practice, $r_{\mathrm{ctx}}$ is instantiated with an $F_\beta$-style grounding score over the selected chunk identifiers.
+>   * In practice, $r_{ctx}$ is instantiated with an $F_\beta$-style grounding score over the selected chunk identifiers.
 
 #### 44. [FIPO: Eliciting Deep Reasoning with Future-KL Influenced Policy Optimization](https://arxiv.org/abs/2603.19835)
 
@@ -703,9 +703,9 @@ A structured and project-oriented reading list for preference optimization and R
 >
 >   * **Mathematical Formulation:** FIPO replaces the standard token advantage with a dense future-aware term that aggregates discounted future-KL influence:
 >
-> $$\hat{A}^{\mathrm{FIPO}}_t = \hat{A}_t + \lambda \sum_{k=t+1}^{T} \gamma^{k-t} \,\mathrm{FutureKL}_k$$
+> $$\hat A_t^{FIPO}=\hat A_t+\lambda\sum_{k=t+1}^{T}\gamma^{k-t}\,FutureKL_k$$
 >
->   * The resulting $\hat{A}^{\mathrm{FIPO}}_t$ is then inserted into a clipped GRPO/DAPO-style surrogate objective together with influence clipping and filtering for stability.
+>   * The resulting $\hat A_t^{FIPO}$ is then inserted into a clipped GRPO/DAPO-style surrogate objective together with influence clipping and filtering for stability.
 
 #### 45. [ERPO: Token-Level Entropy-Regulated Policy Optimization for Large Reasoning Models](https://arxiv.org/abs/2603.28204)
 
@@ -720,7 +720,7 @@ A structured and project-oriented reading list for preference optimization and R
 >
 >   * **Mathematical Formulation:** ERPO defines entropy-aware gating and result-anchored token synthesis to construct its final token-level update signal:
 >
-> $$W_{i,t} = \sigma\!\left(\gamma \,\mathrm{Norm}_G(H_{i,t})\right), \qquad \Psi_{i,t} = W_{i,t}\,\mathrm{sgn}\!\left(\hat{A}^{\mathrm{group}}_i\right)\tilde{s}_{i,t}$$
+> $$W_{i,t}=\sigma(\gamma\,Norm_G(H_{i,t})),\qquad \Psi_{i,t}=W_{i,t}\,\mathrm{sgn}(\hat A_i^{group})\tilde s_{i,t}$$
 >
 >   * These token-level quantities are then normalized and assembled into the final ERPO advantage used for policy optimization.
 
@@ -737,7 +737,7 @@ A structured and project-oriented reading list for preference optimization and R
 >
 >   * **Mathematical Formulation:** HDPO augments the base RL objective with privileged self-distillation on cliff prompts:
 >
-> $$\mathcal{J}_{\mathrm{HDPO}}(\theta) = \mathcal{J}_{\mathrm{RL}}(\theta) + \lambda \,\mathrm{JSD}\!\left(\pi_\theta^{\mathrm{student}} \,\|\, \pi_\theta^{\mathrm{teacher,priv}}\right)$$
+> $$\mathcal J_{HDPO}(\theta)=\mathcal J_{RL}(\theta)+\lambda\,JSD(\pi_\theta^{student}\|\pi_\theta^{teacher,priv})$$
 >
 >   * The paper further proves that $R=1$ filtered privileged rollouts recover the KL-regularized optimal target distribution in the hard-threshold limit.
 
@@ -754,9 +754,137 @@ A structured and project-oriented reading list for preference optimization and R
 >
 >   * **Mathematical Formulation:** The method optimizes a set-valued policy objective over a jointly generated answer set:
 >
-> $$\mathcal{J}_{\mathrm{MARL}}(\theta) = \mathbb{E}_{(x,Y)} \left[r_{\mathrm{set}}(Y)\right], \qquad Y = \{y_1,\dots,y_K\}$$
+> $$\mathcal J_{MARL}(\theta)=\mathbb E_{(x,Y)}[r_{set}(Y)],\qquad Y=\{y_1,\dots,y_K\}$$
 >
->   * Here $r_{\mathrm{set}}$ rewards distributional quality such as coverage, diversity, and calibration rather than only the top-mode answer.
+>   * Here $r_{set}$ rewards distributional quality such as coverage, diversity, and calibration rather than only the top-mode answer.
+
+#### 48. [Soft Sequence Policy Optimization](https://arxiv.org/abs/2602.19327)
+* **Algorithm:** SoftSPO
+* **Venue/Year:** ArXiv 2026
+* **Reference Code:** N/A
+* **Local PDF:** [Glazyrina et al. - 2026 - Soft Sequence Policy Optimization.pdf](<papers/Glazyrina et al. - 2026 - Soft Sequence Policy Optimization.pdf>)
+* **Rating:** `8.0/10`
+> **Description:**
+> * **Core Intuition:** Replaces hard sequence-level ratio clipping with a smoother, soft weighting rule so off-policy or sequence-level RL remains stable without sharp truncation artifacts.
+> * **Engineering Traits:** Relevant to SLMs because smooth ratio control can reduce update discontinuities that otherwise trigger instability under low-capacity, low-rollout regimes.
+> * **Mathematical Formulation:** A representative soft sequence objective takes the form
+>
+> $$L_{SoftSPO}(\theta)=\mathbb E_{\tau\sim\mu}[g(W_\theta(\tau))\,A(\tau)]$$
+>
+> where $W_\theta(\tau)=\pi_\theta(\tau)/\mu(\tau)$ and $g(\cdot)$ is a smooth shaping kernel instead of a hard clip.
+> * **Policy Update:** The policy is updated with smoothly down-weighted sequence importance weights, preserving off-policy usability while avoiding abrupt gradient truncation.
+
+#### 49. [Single-stream Policy Optimization](https://arxiv.org/abs/2509.13232)
+* **Algorithm:** SSPO-Stream
+* **Venue/Year:** ArXiv 2025
+* **Reference Code:** N/A
+* **Local PDF:** [Xu and Ding - 2025 - Single-stream Policy Optimization.pdf](<papers/Xu and Ding - 2025 - Single-stream Policy Optimization.pdf>)
+* **Rating:** `7.6/10`
+> **Description:**
+> * **Core Intuition:** Simplifies policy optimization into a single streamlined training flow, reducing multi-branch RL system complexity.
+> * **Engineering Traits:** More systems-oriented than mechanism-oriented, but still relevant for SLM pipelines where software complexity itself becomes a bottleneck.
+> * **Mathematical Formulation:** The paper emphasizes a unified policy update stream rather than a separate critic/reference pipeline, yielding a simplified objective of the generic form
+>
+> $$L_{SSPO-stream}(\theta)=\mathbb E_{(x,y)}[w_\theta(x,y)\,A(x,y)]$$
+>
+> * **Policy Update:** A single policy stream handles both rollout credit and update application, reducing synchronization overhead.
+
+#### 50. [Bottom-up Policy Optimization: Your Language Model Policy Secretly Contains Internal Policies](https://arxiv.org/abs/2512.19673)
+* **Algorithm:** BuPO
+* **Venue/Year:** ArXiv 2025
+* **Reference Code:** [Trae1ounG/BuPO](https://github.com/Trae1ounG/BuPO)
+* **Local PDF:** [Tan et al. - 2026 - Bottom-up Policy Optimization Your Language Model Policy Secretly Contains Internal Policies.pdf](<papers/Tan et al. - 2026 - Bottom-up Policy Optimization Your Language Model Policy Secretly Contains Internal Policies.pdf>)
+* **Rating:** `7.5/10`
+> **Description:**
+> * **Core Intuition:** Argues that a language model contains multiple latent internal policies and that alignment should be carried out bottom-up rather than as one monolithic global update.
+> * **Engineering Traits:** Interesting for the project's knowledge-retention dimension because it suggests a route to more selective updates, though it is less directly standardized than DPO/GRPO-style baselines.
+> * **Mathematical Formulation:** The method decomposes a global objective into sub-policy level updates, conceptually of the form
+>
+> $$\mathcal J_{BuPO}(\theta)=\sum_{m=1}^{M}\lambda_m\,\mathcal J_m(\theta)$$
+>
+> where each $\mathcal J_m$ corresponds to a latent internal policy or attribute-specific behavior.
+> * **Policy Update:** The optimizer encourages targeted sub-policy adaptation instead of uniformly pushing all behaviors with the same global reward.
+
+#### 51. [AT$^2$PO: Agentic Turn-based Policy Optimization via Tree Search](https://arxiv.org/abs/2601.04767)
+* **Algorithm:** AT$^2$PO
+* **Venue/Year:** ArXiv 2026
+* **Reference Code:** [zzfoutofspace/ATPO](https://github.com/zzfoutofspace/ATPO)
+* **Local PDF:** [Zong et al. - 2026 - AT$^2$PO Agentic Turn-based Policy Optimization via Tree Search.pdf](<papers/Zong et al. - 2026 - AT$^2$PO Agentic Turn-based Policy Optimization via Tree Search.pdf>)
+* **Rating:** `6.8/10`
+> **Description:**
+> * **Core Intuition:** Extends policy optimization to multi-turn agentic settings by combining turn-level decision making with look-ahead tree search.
+> * **Engineering Traits:** Valuable for agentic workflows and tool use, but less central than classic reasoning RLVR for your current SLM project scope.
+> * **Mathematical Formulation:** The objective couples policy optimization with turn-level search-derived value estimates:
+>
+> $$\mathcal J_{AT^2PO}(\theta)=\mathbb E_{\tau}[\sum_{u=1}^{U} \hat A_u^{tree}\,\log\pi_\theta(a_u\mid s_u)]$$
+>
+> * **Policy Update:** Search-expanded trajectories provide improved turn-level credit, which is then distilled back into the base policy.
+
+### Additional Recent Papers to Watch
+
+#### 52. [$f$-PO: Generalizing Preference Optimization with $f$-divergence Minimization](https://arxiv.org/abs/2410.21662)
+* **Algorithm:** f-PO
+* **Venue/Year:** ArXiv 2024
+* **Reference Code:** N/A
+* **Local PDF:** [Han et al. - 2025 - $f$-PO generalizing preference optimization with $f$-divergence minimization.pdf](<papers/Han et al. - 2025 - $f$-PO generalizing preference optimization with $f$-divergence minimization.pdf>)
+* **Rating:** `8.1/10`
+> **Description:**
+> * **Core Intuition:** Unifies many offline preference optimization objectives under a single $f$-divergence perspective, clarifying how DPO-like variants differ mainly in their divergence geometry and induced gradient weighting.
+> * **Engineering Traits:** More theoretical than directly benchmark-oriented, but highly useful for your project because it strengthens the bridge from preference feedback form to update geometry, which is exactly what GITA tries to explain.
+> * **Mathematical Formulation:** A representative variational form is
+>
+> $$L_{f-PO}(\theta)=\mathbb E[T_\phi(z_\theta)]-\mathbb E[f^*(T_\phi(z_\theta))]$$
+>
+> where $z_\theta$ is a preference-induced score and $f^*$ is the convex conjugate of the chosen divergence.
+> * **Policy Update:** Different choices of $f$ recover different policy-update behaviors, ranging from conservative anchoring to more aggressive preference sharpening.
+
+#### 53. [Is On-Policy Data always the Best Choice for Direct Preference Optimization-based LM Alignment?](https://arxiv.org/abs/2508.10530)
+* **Algorithm:** On-policy DPO Analysis
+* **Venue/Year:** ArXiv 2025
+* **Reference Code:** N/A
+* **Local PDF:** [Sun et al. - 2026 - Is on-policy data always the best choice for direct preference optimization-based LM alignment.pdf](<papers/Sun et al. - 2026 - Is on-policy data always the best choice for direct preference optimization-based LM alignment.pdf>)
+* **Rating:** `7.8/10`
+> **Description:**
+> * **Core Intuition:** Re-examines the common belief that on-policy preference data is always superior for DPO-style alignment, and studies when static data, refreshed data, or on-policy data are actually beneficial.
+> * **Engineering Traits:** Very relevant to your project design because it directly informs whether preference data refresh changes update geometry or merely changes effective supervision quality.
+> * **Mathematical Formulation:** The paper studies DPO objectives under changing data distributions rather than proposing a wholly new loss, i.e.
+>
+> $$\mathcal L_{DPO}(\theta;\mathcal D_t)=-\mathbb E_{(x,y_w,y_l)\sim\mathcal D_t}[\log\sigma(\Delta_\theta(x,y_w,y_l))]$$
+>
+> where the focus is how the choice of $\mathcal D_t$ changes training dynamics.
+> * **Policy Update:** The key claim is that the data source itself changes the direction and quality of preference gradients, which matters for small-model stability and retention.
+
+#### 54. [SGPO: Self-Generated Preference Optimization based on Self-Improver](https://arxiv.org/abs/2507.20181)
+
+* **Algorithm:** SGPO
+* **Venue/Year:** ArXiv 2025
+* **Reference Code:** N/A
+* **Local PDF:** [Lee et al. - 2025 - SGPO self-generated preference optimization based on self-improver.pdf](<papers/Lee et al. - 2025 - SGPO self-generated preference optimization based on self-improver.pdf>)
+* **Rating:** `7.6/10`
+> **Description:**
+> * **Core Intuition:** Uses the model's own improving generations to construct preference signals, reducing dependence on externally curated preference datasets.
+> * **Engineering Traits:** Interesting for scaling data creation, but less controlled than fixed offline datasets, so it is better treated as a promising extension rather than a primary benchmark for your mechanism study.
+> * **Mathematical Formulation:** SGPO still fits the DPO-style pairwise preference pattern, but with self-generated preference pairs:
+>
+> $$\mathcal L_{SGPO}(\theta)=-\mathbb E_{(x,y^+,y^-)\sim\mathcal D_{self}}[\log\sigma(\Delta_\theta(x,y^+,y^-))]$$
+>
+> * **Policy Update:** The policy is iteratively improved on preference pairs generated from its own stronger snapshots or self-improving loop.
+
+#### 55. [TAPO: Translation Augmented Policy Optimization for Multilingual Mathematical Reasoning](https://arxiv.org/abs/2603.25419)
+
+* **Algorithm:** TAPO
+* **Venue/Year:** ArXiv 2026
+* **Reference Code:** N/A
+* **Local PDF:** [Huang et al. - 2026 - TAPO Translation Augmented Policy Optimization for Multilingual Mathematical Reasoning.pdf](<papers/Huang et al. - 2026 - TAPO Translation Augmented Policy Optimization for Multilingual Mathematical Reasoning.pdf>)
+* **Rating:** `7.4/10`
+> **Description:**
+> * **Core Intuition:** Improves multilingual mathematical reasoning by augmenting policy optimization with translated supervision or translated rollout signals, reducing the language gap in rewardable reasoning trajectories.
+> * **Engineering Traits:** More niche than your core English-centric SLM study, but worth tracking because it shows how policy optimization interacts with language transfer and multilingual reward sparsity.
+> * **Mathematical Formulation:** A representative TAPO objective can be viewed as a multilingual augmentation of the base RL/RLVR loss:
+>
+> $$\mathcal J_{TAPO}(\theta)=\mathcal J_{base}(\theta)+\lambda\,\mathcal J_{trans}(\theta)$$
+>
+> * **Policy Update:** The policy learns from both original and translated reasoning signals, improving reward coverage across languages.
 
 ---
 
