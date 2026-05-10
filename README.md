@@ -886,6 +886,123 @@ A structured and project-oriented reading list for preference optimization and R
 >
 > * **Policy Update:** The policy learns from both original and translated reasoning signals, improving reward coverage across languages.
 
+#### 56. [Target Policy Optimization](https://arxiv.org/abs/2604.06159)
+
+* **Algorithm:** TPO
+* **Venue/Year:** ArXiv 2026
+* **Reference Code:** [JeanKaddour/tpo](https://github.com/JeanKaddour/tpo)
+* **Local PDF:** [Kaddour - 2026 - Target Policy Optimization.pdf](<papers/Kaddour - 2026 - Target Policy Optimization.pdf>)
+* **Rating:** `8.2/10`
+> **Description:**
+> * **Core Intuition:** Separates the question of which sampled completions should gain probability mass from how the model parameters should move, replacing fragile policy-gradient updates with fitting to an explicitly constructed target distribution.
+> * **Engineering Traits:** Very relevant to SLMs because sparse rewards and small rollout groups often make GRPO-style gradients noisy or under-informative; TPO offers a supervised-learning-like update while staying in the online RLVR setting.
+> * **Mathematical Formulation:** Given scored completions with old probabilities $p_i^{old}$ and utilities $u_i$, TPO constructs
+>
+> $$q_i=\frac{p_i^{old}\exp(u_i)}{\sum_j p_j^{old}\exp(u_j)},\qquad \mathcal L_{TPO}(\theta)=-\sum_i q_i\log p_\theta(y_i\mid x)$$
+>
+> * **Policy Update:** Gradient descent on cross-entropy moves the current policy toward the target distribution $q$ and naturally stops once $p_\theta$ matches the desired redistribution.
+
+#### 57. [Provable and Practical In-Context Policy Optimization for Self-Improvement](https://arxiv.org/abs/2603.01335)
+
+* **Algorithm:** ICPO / ME-ICPO
+* **Venue/Year:** ICLR 2026
+* **Reference Code:** N/A
+* **Local PDF:** [Yu et al. - 2026 - Provable and Practical In-Context Policy Optimization for Self-Improvement.pdf](<papers/Yu et al. - 2026 - Provable and Practical In-Context Policy Optimization for Self-Improvement.pdf>)
+* **Rating:** `7.6/10`
+> **Description:**
+> * **Core Intuition:** Treats multi-round self-reflection at inference time as an in-context policy optimization process, where the model uses its own response and self-assessed reward to refine later responses without parameter updates.
+> * **Engineering Traits:** Useful for test-time scaling studies, though it is less directly comparable to train-time RLVR methods because improvement happens through prompting and self-selection rather than optimizer steps.
+> * **Mathematical Formulation:** A simplified ICPO loop can be viewed as repeatedly updating the in-context state
+>
+> $$c_{k+1}=f(c_k,y_k,\hat r_k),\qquad y_{k+1}\sim\pi_\theta(\cdot\mid x,c_{k+1})$$
+>
+> where ME-ICPO selects low-entropy self-assessed rewards to make the feedback signal more reliable.
+> * **Policy Update:** There is no weight update at inference time; the effective policy is improved by conditioning on self-generated reward traces and minimum-entropy response selection.
+
+#### 58. [ESPO: Entropy Importance Sampling Policy Optimization](https://arxiv.org/abs/2512.00499)
+
+* **Algorithm:** ESPO
+* **Venue/Year:** ArXiv 2025
+* **Reference Code:** [ShopeeLLM/ESPO](https://github.com/ShopeeLLM/ESPO)
+* **Local PDF:** [Sheng et al. - 2025 - ESPO - Entropy Importance Sampling Policy Optimization.pdf](<papers/Sheng et al. - 2025 - ESPO - Entropy Importance Sampling Policy Optimization.pdf>)
+* **Rating:** `8.3/10`
+> **Description:**
+> * **Core Intuition:** Groups tokens by predictive entropy so high-uncertainty decision points receive finer optimization while low-entropy tokens avoid unnecessary noisy updates.
+> * **Engineering Traits:** Strongly aligned with the project's credit-assignment dimension: it keeps token-level information but uses entropy grouping and adaptive clipping to reduce variance.
+> * **Mathematical Formulation:** ESPO can be summarized as applying entropy-conditioned importance sampling and clipping:
+>
+> $$L_{ESPO}(\theta)=\mathbb E_{t}[\min(w_tA_t,\mathrm{clip}(w_t,1-\epsilon(H_t),1+\epsilon(H_t))A_t)]$$
+>
+> where $H_t$ controls the token group and the local trust region.
+> * **Policy Update:** High-entropy tokens get more carefully weighted updates, improving gradient utilization without letting unstable token-level ratios dominate training.
+
+#### 59. [Trust-Region Adaptive Policy Optimization](https://arxiv.org/abs/2512.17636)
+
+* **Algorithm:** TRAPO
+* **Venue/Year:** ArXiv 2025
+* **Reference Code:** [Su-my/TRAPO](https://github.com/Su-my/TRAPO)
+* **Local PDF:** [Su et al. - 2025 - Trust-Region Adaptive Policy Optimization.pdf](<papers/Su et al. - 2025 - Trust-Region Adaptive Policy Optimization.pdf>)
+* **Rating:** `8.0/10`
+> **Description:**
+> * **Core Intuition:** Interleaves expert-prefix supervision with RL on the model's own completions, addressing the mismatch between rigid SFT imitation and later exploratory RL.
+> * **Engineering Traits:** Relevant to SLMs because it tries to preserve useful expert guidance without freezing the model into low-exploration behavior before RL begins.
+> * **Mathematical Formulation:** A representative TRAPO objective combines trust-region SFT and RL:
+>
+> $$\mathcal L_{TRAPO}=\mathcal L_{RL}(y_{model})+\lambda\,\mathcal L_{TrSFT}(y_{expert-prefix})$$
+>
+> with adaptive prefix selection and trust-region control on the SFT part.
+> * **Policy Update:** Each training instance uses SFT where expert prefixes are useful and RL where the model should explore its own completions, reducing the SFT-then-RL inconsistency.
+
+#### 60. [EAPO: Enhancing Policy Optimization with On-Demand Expert Assistance](https://arxiv.org/abs/2509.23730)
+
+* **Algorithm:** EAPO
+* **Venue/Year:** ArXiv 2025
+* **Reference Code:** N/A
+* **Local PDF:** [Song et al. - 2025 - EAPO - Enhancing Policy Optimization with On-Demand Expert Assistance.pdf](<papers/Song et al. - 2025 - EAPO - Enhancing Policy Optimization with On-Demand Expert Assistance.pdf>)
+* **Rating:** `7.7/10`
+> **Description:**
+> * **Core Intuition:** Lets the policy consult external experts during training and learn when assistance is worth using, then evaluates the optimized policy independently without expert calls.
+> * **Engineering Traits:** Interesting for low-capacity models because expert assistance can densify exploration, but the extra interaction channel and expert dependency make it more complex than plain GRPO.
+> * **Mathematical Formulation:** The training objective can be viewed as optimizing reward under assisted trajectories:
+>
+> $$\max_\theta\ \mathbb E_{\tau\sim\pi_\theta^{assist}}[R(\tau)-\lambda C_{expert}(\tau)-\beta D_{KL}(\pi_\theta\|\pi_{ref})]$$
+>
+> where $C_{expert}$ penalizes excessive consultation.
+> * **Policy Update:** The model is rewarded for using expert help only when it improves the reasoning trajectory, gradually internalizing expert-guided behavior into the base policy.
+
+#### 61. [Near-Future Policy Optimization](https://arxiv.org/abs/2604.20733)
+
+* **Algorithm:** NPO / AutoNPO
+* **Venue/Year:** ArXiv 2026
+* **Reference Code:** N/A
+* **Local PDF:** [Qin et al. - 2026 - Near-Future Policy Optimization.pdf](<papers/Qin et al. - 2026 - Near-Future Policy Optimization.pdf>)
+* **Rating:** `7.5/10`
+> **Description:**
+> * **Core Intuition:** Uses a model's own near-future checkpoint as the auxiliary trajectory source, aiming for trajectories that are stronger than the current policy but closer than external teachers.
+> * **Engineering Traits:** Useful for understanding mixed-policy RLVR, though it requires a training loop that can manage checkpoint selection and intervention timing.
+> * **Mathematical Formulation:** NPO frames auxiliary trajectory usefulness through a quality-variance tradeoff:
+>
+> $$S=\frac{Q}{V},\qquad \mathcal J_{NPO}=\mathcal J_{on-policy}+\alpha\,\mathbb E_{\tau\sim\pi_{future}}[w(\tau)A(\tau)]$$
+>
+> where the near-future policy is chosen to improve $Q$ without making $V$ too large.
+> * **Policy Update:** The current policy learns from its own stronger future snapshot, and AutoNPO triggers the intervention when online signals suggest that the benefit outweighs the variance cost.
+
+#### 62. [GRPO-VPS: Enhancing Group Relative Policy Optimization with Verifiable Process Supervision for Effective Reasoning](https://arxiv.org/abs/2604.20659)
+
+* **Algorithm:** GRPO-VPS
+* **Venue/Year:** ICLR 2026
+* **Reference Code:** N/A
+* **Local PDF:** [Wang et al. - 2026 - GRPO-VPS - Enhancing Group Relative Policy Optimization with Verifiable Process Supervision for Effective Reasoning.pdf](<papers/Wang et al. - 2026 - GRPO-VPS - Enhancing Group Relative Policy Optimization with Verifiable Process Supervision for Effective Reasoning.pdf>)
+* **Rating:** `8.1/10`
+> **Description:**
+> * **Core Intuition:** Adds verifiable process supervision to GRPO by probing how each reasoning segment changes the model's belief in the correct answer.
+> * **Engineering Traits:** Very relevant to SLMs because it directly attacks coarse sequence-level credit assignment while avoiding extra learned reward models or expensive Monte Carlo process labels.
+> * **Mathematical Formulation:** For reasoning segments $s$, GRPO-VPS estimates progress by the change in correct-answer belief:
+>
+> $$\Delta_s=\log p_\theta(a^\star\mid x,y_{\le s})-\log p_\theta(a^\star\mid x,y_{<s}),\qquad \hat A_s=\hat A_{seq}+\alpha\Delta_s$$
+>
+> * **Policy Update:** Segment-level progress refines the usual group-relative advantage, so tokens in helpful reasoning segments receive stronger updates and overthinking segments are suppressed.
+
 ---
 
 ## 🌟 Useful Resources (Surveys & Codebases)
